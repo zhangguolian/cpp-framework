@@ -29,6 +29,27 @@
         "sstream": "cpp",
         "streambuf": "cpp",
         "system_error": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "iostream": "cpp",
+        "cmath": "cpp",
+        "cstddef": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "atomic": "cpp",
+        "strstream": "cpp",
+        "chrono": "cpp",
+        "complex": "cpp",
+        "deque": "cpp",
+        "iomanip": "cpp",
+        "memory": "cpp",
+        "numeric": "cpp",
+        "ratio": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp",
+        "cstdarg": "cpp",
+        "*.ipp": "cpp",
+        "list": "cpp",
+        "bitset": "cpp"
     }
 }
