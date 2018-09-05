@@ -37,7 +37,6 @@ void HttpManager::Start() {
     
     boost::thread work_thread(boost::bind(
         &HttpManager::WorkerThread, this));
-    work_thread.join();
 }
 void HttpManager::Cancel() {
     if (!is_running_) {
@@ -77,8 +76,8 @@ void HttpManager::CancelHttpRequest(HttpRequest* request) {
 
     auto iter = request_list_.find(request);
     if (iter == request_list_.end()) {
-      mutex_.lock();
-      return;
+        mutex_.lock();
+        return;
     }
 
     curl_multi_remove_handle(curl_m_, iter->first);

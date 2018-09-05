@@ -1,5 +1,7 @@
 #include <http/http_request.h>
 
+#include <http/http_manager.h>
+
 namespace http {
 
 HttpRequest::HttpRequest(HttpMode http_mode,
@@ -16,10 +18,10 @@ HttpRequest::~HttpRequest() {
 }
 
 void HttpRequest::Start() {
-
+    HttpManager::GetInstance()->AddHttpRequest(this);
 }
 void HttpRequest::Cancel() {
-
+    HttpManager::GetInstance()->CancelHttpRequest(this);
 }
 
 int HttpRequest::http_code() {
