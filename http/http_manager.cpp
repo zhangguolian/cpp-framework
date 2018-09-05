@@ -98,7 +98,16 @@ CURL* HttpManager::CreateCURL(HttpRequest* request) {
         if (request->http_mode() == HttpRequest::HttpMode::GET) {
             url += "?" + utils::Map2UrlQuery(request->params());
         } else {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, utils::Map2UrlQuery(request->params()).c_str());
+            struct curl_slist* headers = NULL;
+            headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+            headers = curl_slist_append(headers, "Accept-Language: zh-cn");
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+            std::string params = utils::Map2UrlQuery(request->params());
+            std::string* str_params = new std::string(params);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, params.size());
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params.c_str());
+            curl_easy_setopt(curl, CURLOPT_POST, 1);
+            //curl_slist_free_all(headers);
         }
     }
 

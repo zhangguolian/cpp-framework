@@ -11,12 +11,15 @@ public:
 
     void Start()
     {
-        http::HttpRequest  *request = new http::HttpRequest(
-            http::HttpRequest::HttpMode::GET,
-            "http://www.baidu.com", 
+        request_ = new http::HttpRequest(
+            http::HttpRequest::HttpMode::POST,
+            "http://150.109.59.176/exchange/api/1.0/user/symbol/info", 
             this);
-        request->Start();
+        request_->add_params("symbol", "btcusdt");
+        request_->Start();
     }
+
+    http::HttpRequest* request_;
 };
 
 int main() {
@@ -26,7 +29,9 @@ int main() {
     http_test.Start();
 
     while (true) {
-        
+        // HttpTest* http_test = new HttpTest();
+        // http_test->Start();
+        sleep(1);
     }
 
     return 0;
