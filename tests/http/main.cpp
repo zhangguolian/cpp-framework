@@ -1,5 +1,6 @@
 #include <http/http_manager.h>
 #include <http/http_request.h>
+#include <jsoncpp/json/json.h>
 
 class HttpTest : public http::HttpRequest::Delegate {
 public:
@@ -7,6 +8,14 @@ public:
     {
         std::cout << "OnRequestComplete" << std::endl;
         std::cout << "res:" << request->response() << std::endl;
+
+        Json::Value json_value;
+        Json::Reader json_reader;
+        json_reader.parse(request->response(), json_value);
+        Json::Value symbol_value = json_value["symbol_info"];
+        std::cout << json_value["test"].asString() << std::endl;
+        std::cout << symbol_value["symbol"].asString() << std::endl;
+        std::cout << symbol_value << std::endl;
     }
 
     void Start()
