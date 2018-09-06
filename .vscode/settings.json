@@ -50,7 +50,12 @@
         "cstdarg": "cpp",
         "*.ipp": "cpp",
         "list": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "future": "cpp",
+        "mutex": "cpp"
     },
     "clang.diagnostic.enable": false
 }
