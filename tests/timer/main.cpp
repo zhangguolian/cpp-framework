@@ -7,6 +7,8 @@
 void print(const boost::system::error_code& err, boost::asio::deadline_timer* pt)
 {
     std::cout<<"hello,world!\n";
+    pt->expires_at(pt->expires_at() + boost::posix_time::seconds(2)) ;
+    pt->async_wait(boost::bind(print, _1, pt));
 }
 
 typedef boost::function<int(void)> Func;

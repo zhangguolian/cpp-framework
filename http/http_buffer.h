@@ -3,7 +3,7 @@
 namespace http {
 
 class HttpBuffer
-  {
+{
 public:
     HttpBuffer(int size);
     ~HttpBuffer();
@@ -18,6 +18,6 @@ private:
     int size_;
     int used_;
     char* buffer_;
-  };
+};
 
 };

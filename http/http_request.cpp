@@ -5,8 +5,8 @@
 namespace http {
 
 HttpRequest::HttpRequest(HttpMode http_mode,
-                            const std::string& url,
-                            Delegate* delegate)
+                         const std::string& url,
+                         Delegate* delegate)
             : status_(INIT)
             , http_mode_(http_mode)
             , url_(url)

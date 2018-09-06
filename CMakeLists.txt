@@ -12,4 +12,5 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_subdirectory(utils)
 add_subdirectory(http)
+add_subdirectory(thread)
 add_subdirectory(tests)
