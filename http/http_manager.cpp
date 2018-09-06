@@ -63,12 +63,12 @@ void HttpManager::AddHttpRequest(HttpRequest* request) {
     }
     mutex_.unlock();
 
-    CURL *curl = CreateCURL(request);
+    CURLData* curl_data = CreateCURLData(request);
 
     mutex_.lock();
-    request_list_[request] = curl;
-    callback_data_list_[curl].request_ = request;
-    curl_multi_add_handle(curl_m_, curl);
+    request_list_[request].reset(curl_data);
+    callback_data_list_[curl_data->curl_].request_ = request;
+    curl_multi_add_handle(curl_m_, curl_data->curl_);
     mutex_.unlock();
 }
 void HttpManager::CancelHttpRequest(HttpRequest* request) {
@@ -90,44 +90,42 @@ void HttpManager::CancelHttpRequest(HttpRequest* request) {
     return;
 }
 
-CURL* HttpManager::CreateCURL(HttpRequest* request) {
-    CURL* curl = curl_easy_init();
+HttpManager::CURLData* HttpManager::CreateCURLData(HttpRequest* request) {
+    CURLData* curl_data = new CURLData();
+    curl_data->curl_ = curl_easy_init();
 
     std::string url = request->url();
     if (!request->params().empty()) {
         if (request->http_mode() == HttpRequest::HttpMode::GET) {
             url += "?" + utils::Map2UrlQuery(request->params());
         } else {
-            struct curl_slist* headers = NULL;
-            headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
-            headers = curl_slist_append(headers, "Accept-Language: zh-cn");
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            std::string params = utils::Map2UrlQuery(request->params());
-            std::string* str_params = new std::string(params);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, params.size());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params.c_str());
-            curl_easy_setopt(curl, CURLOPT_POST, 1);
-            //curl_slist_free_all(headers);
+            curl_data->headers_ = curl_slist_append(curl_data->headers_, "Content-Type: application/x-www-form-urlencoded");
+            curl_data->headers_ = curl_slist_append(curl_data->headers_, "Accept-Language: zh-cn");
+            curl_data->post_data_ = utils::Map2UrlQuery(request->params());
+            curl_easy_setopt(curl_data->curl_, CURLOPT_HTTPHEADER, curl_data->headers_);
+            curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDSIZE, curl_data->post_data_.size());
+            curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDS, curl_data->post_data_.c_str());
+            curl_easy_setopt(curl_data->curl_, CURLOPT_POST, 1);
         }
     }
 
     if (request->url().find("https://") != std::string::npos) {
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl_data->curl_, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl_data->curl_, CURLOPT_SSL_VERIFYHOST, 0L);
     }
 
     if (!request->cookie().empty()) {
-        curl_easy_setopt(curl, CURLOPT_COOKIE, request->cookie().c_str());
+        curl_easy_setopt(curl_data->curl_, CURLOPT_COOKIE, request->cookie().c_str());
     }  
 
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 5);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HttpManager::WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, curl);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl_data->curl_, CURLOPT_NOSIGNAL, 1);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_MAXREDIRS, 5);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_WRITEFUNCTION, HttpManager::WriteCallback);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_WRITEDATA, curl_data->curl_);
 
-    return curl;
+    return curl_data;
 }
 
 int HttpManager::CurlSelect() {
@@ -224,7 +222,6 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
     //} 
     callback_data_list_.erase(msg->easy_handle);
     curl_multi_remove_handle(curl_m_, msg->easy_handle);
-    curl_easy_cleanup(msg->easy_handle);
 
     mutex_.unlock();
 

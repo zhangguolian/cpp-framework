@@ -15,22 +15,41 @@ class HttpRequest;
 
 class HttpManager {
 public:
-    struct CallbackData 
-    {
-      CallbackData() : request_(NULL)
-                     , buffer_(new HttpBuffer(DEFAULT_BUFFER_SIZE)) {}
-      ~CallbackData() {
-          if (buffer_ != NULL) {
-              delete buffer_;
-              buffer_ = NULL;
-          }
-      }
+    struct CallbackData {
+        CallbackData() : request_(NULL)
+                       , buffer_(new HttpBuffer(DEFAULT_BUFFER_SIZE)) {}
+        ~CallbackData() {
+            if (buffer_ != NULL) {
+                delete buffer_;
+                buffer_ = NULL;
+            }
+        }
 
-      HttpRequest* request_;
-      HttpBuffer* buffer_;
+        HttpRequest* request_;
+        HttpBuffer* buffer_;
     };
 
-    typedef std::map<HttpRequest*, CURL*> REQUEST_LIST;
+    struct CURLData {
+        CURLData() : curl_(NULL)
+                   , headers_(NULL) {}
+        ~CURLData() {
+            if (curl_ != NULL) {
+                curl_easy_cleanup(curl_);
+                curl_ = NULL;
+            }
+
+            if (headers_ != NULL) {
+                curl_slist_free_all(headers_);
+                headers_ = NULL;
+            }
+        }
+
+        CURL* curl_;
+        struct curl_slist* headers_;
+        std::string post_data_;
+    };
+
+    typedef std::map<HttpRequest*, std::unique_ptr<CURLData>> REQUEST_LIST;
     typedef std::map<CURL*, CallbackData> CB_DATA_MAP;
 
     static HttpManager* GetInstance();
@@ -47,7 +66,7 @@ private:
 
     int CurlSelect();
     void HttpRequestComplete(CURLMsg* msg);
-    CURL* CreateCURL(HttpRequest* request);
+    CURLData* CreateCURLData(HttpRequest* request);
 
     void WorkerThread();
     static size_t WriteCallback(void *buffer, size_t size, size_t count, void * stream);
