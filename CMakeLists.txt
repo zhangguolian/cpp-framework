@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-project(sign_machine VERSION "1.0.0")
+project(cpp_framework VERSION "1.0.0")
 
 add_definitions(-std=c++11)
 
