@@ -1,5 +1,4 @@
-#include <http/http_manager.h>
-#include <http/http_request.h>
+#include <http/http.h>
 #include <jsoncpp/json/json.h>
 
 class HttpTest : public http::HttpRequest::Delegate {
