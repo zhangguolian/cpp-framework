@@ -1,4 +1,5 @@
-#include <utils/map.h>
+#include <utils/string.h>
+#include <stdarg.h>
 
 namespace utils {
 
@@ -13,6 +14,17 @@ std::string Map2UrlQuery(const std::map<std::string, std::string> params) {
     }
 
     return str_params;
+}
+
+std::string StringPrintf(const char* format,  ...)
+{
+    char buf[1024];
+    char* p = buf;
+    va_list args;
+    va_start(args, format);
+    vsprintf(p, format, args);
+    va_end(args);
+    return p;
 }
 
 }
