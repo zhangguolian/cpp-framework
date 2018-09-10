@@ -26,6 +26,7 @@ bool Mysql::Init(int db_port,
         return false;
     }
 
+    mysql_ = new MYSQL();
     if (mysql_init(mysql_) == NULL) {
         printf("Mysql::Init mysql_init fail\n");
         return false;
@@ -49,6 +50,8 @@ bool Mysql::Exec(const std::string& sql) {
 }
 bool Mysql::QueryRow(const std::string& sql,
                      SQL_ROW& row) {
+    bool is_success = false;
+
     if (mysql_query(mysql_, sql.c_str())) {
         printf("Mysql::QueryRow mysql_query fail, error:%s\n", mysql_error(mysql_));
         return false;
@@ -59,34 +62,89 @@ bool Mysql::QueryRow(const std::string& sql,
 
     if (mysql_num_rows(result) == 0) {
         printf("Mysql::QueryRow mysql_num_rows is 0\n");
-        return false;
+        goto exit;
     }
 
-    int field_count = mysql_num_fields(result);
-    MYSQL_ROW mysql_row = NULL;
-    mysql_row = mysql_fetch_row(result);
-    if (mysql_row == NULL) {
-        printf("Mysql::QueryRow mysql_fetch_row fail\n");
-        return false;
-    }
-
-    for (int i = 0; i < field_count; i++) {
-        MYSQL_FIELD* field = NULL;
-        field = mysql_fetch_field_direct(result, i);
-        if (field == NULL) {
-            continue;
+    {
+        int field_count = mysql_num_fields(result);
+        MYSQL_ROW mysql_row = NULL;
+        mysql_row = mysql_fetch_row(result);
+        if (mysql_row == NULL) {
+            printf("Mysql::QueryRow mysql_fetch_row fail\n");
+            goto exit;
         }
 
-        row[field->name] = mysql_row[i];
+        for (int i = 0; i < field_count; i++) {
+            MYSQL_FIELD* field = NULL;
+            field = mysql_fetch_field_direct(result, i);
+            if (field == NULL) {
+                continue;
+            }
+
+            row[field->name] = mysql_row[i];
+        }
     }
 
-    mysql_free_result(result);
+    is_success = true;
 
-    return true;
+exit:
+    if (result != NULL) {
+        mysql_free_result(result);
+    }
+
+    return is_success;
 }
 bool Mysql::QueryRows(const std::string& sql,
                       SQL_ROWS& rows) {
-    return true;
+    bool is_success = false;
+
+    if (mysql_query(mysql_, sql.c_str())) {
+        printf("Mysql::QueryRow mysql_query fail, error:%s\n", mysql_error(mysql_));
+        return false;
+    }
+
+    MYSQL_RES* result = NULL;
+    result = mysql_store_result(mysql_);
+
+    if (mysql_num_rows(result) == 0) {
+        printf("Mysql::QueryRow mysql_num_rows is 0\n");
+        goto exit;
+    }
+
+    {
+        int field_count = mysql_num_fields(result);
+        MYSQL_ROW mysql_row = NULL;
+        mysql_row = mysql_fetch_row(result);
+        if (mysql_row == NULL) {
+            printf("Mysql::QueryRow mysql_fetch_row fail\n");
+            goto exit;
+        }
+
+        while (NULL != mysql_row) {
+            SQL_ROW row;
+            for(int i = 0; i < field_count; i++) {
+                MYSQL_FIELD* field = NULL;
+                field = mysql_fetch_field_direct(result, i);
+                if (field == NULL) {
+                    continue;
+                }
+
+                row[field->name] = mysql_row[i];
+            }
+
+            rows.push_back(row); 
+            mysql_row = mysql_fetch_row(result);
+        }
+    }
+              
+    is_success = true;
+
+exit:
+    if (result != NULL) {
+        mysql_free_result(result);
+    }
+
+    return is_success;
 }
 
 }

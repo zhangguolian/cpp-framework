@@ -6,11 +6,11 @@
 
 namespace sql {
 
+typedef std::map<std::string, std::string> SQL_ROW;
+typedef std::vector<std::map<std::string, std::string>> SQL_ROWS;
+
 class SqlBase {
 public:
-    typedef std::map<std::string, std::string> SQL_ROW;
-    typedef std::vector<std::map<std::string, std::string>> SQL_ROWS;
-
     virtual bool Init(int db_port,
                       const std::string& db_host,
                       const std::string& db_user,
