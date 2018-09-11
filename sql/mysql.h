@@ -8,7 +8,7 @@ namespace sql {
 class Mysql : public SqlBase {
 public:
     Mysql();
-    ~Mysql();
+    virtual ~Mysql();
 
     bool Init(int db_port,
               const std::string& db_host,

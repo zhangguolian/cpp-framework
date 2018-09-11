@@ -11,6 +11,8 @@ typedef std::vector<std::map<std::string, std::string>> SQL_ROWS;
 
 class SqlBase {
 public:
+    SqlBase() {}
+    virtual ~SqlBase() {}
     virtual bool Init(int db_port,
                       const std::string& db_host,
                       const std::string& db_user,
