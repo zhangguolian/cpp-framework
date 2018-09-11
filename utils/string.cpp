@@ -27,4 +27,16 @@ std::string StringPrintf(const char* format,  ...)
     return p;
 }
 
+int StringToInt(const std::string& str_value) {
+    int value = 0;
+    sscanf(str_value.c_str(), "%d", &value);
+    return value;
+}
+
+int64_t StringToInt64(const std::string& str_value) {
+    int64_t value = 0;
+    sscanf(str_value.c_str(), "%ld", &value);
+    return value;
+}
+
 }
