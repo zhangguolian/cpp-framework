@@ -219,10 +219,7 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
 
     iter->second.request_->delegate()->OnHttpRequestComplete(iter->second.request_);
 
-    // test {
-    //request_list_.erase(request);
     request_list_.erase(iter->second.request_);
-    //} 
     callback_data_list_.erase(msg->easy_handle);
     curl_multi_remove_handle(curl_m_, msg->easy_handle);
 
