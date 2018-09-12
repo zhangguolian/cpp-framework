@@ -3,7 +3,7 @@
 
 class HttpTest : public http::HttpRequest::Delegate {
 public:
-    void OnHttpRequestComplete(http::HttpRequest* request) override
+    void OnHttpRequestComplete(std::shared_ptr<http::HttpRequest> request) override
     {
         std::cout << "OnRequestComplete" << std::endl;
         std::cout << "res:" << request->response() << std::endl;
@@ -19,15 +19,15 @@ public:
 
     void Start()
     {
-        request_ = new http::HttpRequest(
+        request_.reset(new http::HttpRequest(
             http::HttpRequest::HttpMode::POST,
             "http://150.109.59.176/exchange/api/1.0/user/symbol/info", 
-            this);
+            this));
         request_->add_params("symbol", "btcusdt");
-        request_->Start();
+        http::HttpRequest::Start(request_);
     }
 
-    http::HttpRequest* request_;
+    std::shared_ptr<http::HttpRequest> request_;
 };
 
 int main() {

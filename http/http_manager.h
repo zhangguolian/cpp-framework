@@ -16,8 +16,7 @@ class HttpRequest;
 class HttpManager {
 public:
     struct CallbackData {
-        CallbackData() : request_(NULL)
-                       , buffer_(new HttpBuffer(DEFAULT_BUFFER_SIZE)) {}
+        CallbackData() : buffer_(new HttpBuffer(DEFAULT_BUFFER_SIZE)) {}
         ~CallbackData() {
             if (buffer_ != NULL) {
                 delete buffer_;
@@ -25,8 +24,8 @@ public:
             }
         }
 
-        HttpRequest* request_;
         HttpBuffer* buffer_;
+        std::shared_ptr<http::HttpRequest> request_;
     };
 
     struct CURLData {
@@ -49,7 +48,7 @@ public:
         std::string post_data_;
     };
 
-    typedef std::map<HttpRequest*, std::unique_ptr<CURLData>> REQUEST_LIST;
+    typedef std::map<std::shared_ptr<HttpRequest>, std::unique_ptr<CURLData>> REQUEST_LIST;
     typedef std::map<CURL*, CallbackData> CB_DATA_MAP;
 
     static HttpManager* GetInstance();
@@ -57,8 +56,8 @@ public:
     void Start();
     void Cancel();
 
-    void AddHttpRequest(HttpRequest* request);
-    void CancelHttpRequest(HttpRequest* request);
+    void AddHttpRequest(std::shared_ptr<HttpRequest> request);
+    void CancelHttpRequest(std::shared_ptr<HttpRequest> request);
 
 private:
     HttpManager();
@@ -66,7 +65,7 @@ private:
 
     int CurlSelect();
     void HttpRequestComplete(CURLMsg* msg);
-    CURLData* CreateCURLData(HttpRequest* request);
+    CURLData* CreateCURLData(std::shared_ptr<HttpRequest> request);
 
     void WorkerThread();
     static size_t WriteCallback(void *buffer, size_t size, size_t count, void * stream);

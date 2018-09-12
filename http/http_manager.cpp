@@ -55,7 +55,7 @@ void HttpManager::Cancel() {
     mutex_.unlock();
 }
 
-void HttpManager::AddHttpRequest(HttpRequest* request) {
+void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
     mutex_.lock();
     if (request == NULL || request_list_.find(request) != request_list_.end()) {
         mutex_.unlock();
@@ -71,7 +71,7 @@ void HttpManager::AddHttpRequest(HttpRequest* request) {
     curl_multi_add_handle(curl_m_, curl_data->curl_);
     mutex_.unlock();
 }
-void HttpManager::CancelHttpRequest(HttpRequest* request) {
+void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
     mutex_.lock();
 
     auto iter = request_list_.find(request);
@@ -80,9 +80,9 @@ void HttpManager::CancelHttpRequest(HttpRequest* request) {
         return;
     }
 
-    curl_multi_remove_handle(curl_m_, iter->first);
-    curl_easy_cleanup(iter->first);
-    callback_data_list_.erase(iter->first);
+    curl_multi_remove_handle(curl_m_, iter->second->curl_);
+    curl_easy_cleanup(iter->second->curl_);
+    callback_data_list_.erase(iter->second->curl_);
     request_list_.erase(request);
 
     mutex_.unlock();
@@ -90,7 +90,7 @@ void HttpManager::CancelHttpRequest(HttpRequest* request) {
     return;
 }
 
-HttpManager::CURLData* HttpManager::CreateCURLData(HttpRequest* request) {
+HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> request) {
     CURLData* curl_data = new CURLData();
     curl_data->curl_ = curl_easy_init();
 
@@ -200,21 +200,24 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
         return;
     }
 
-    int http_code = -1;
-    if (msg->data.result == CURLE_OK) {
-        curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &http_code);
-    }
+    // test {
+    // int http_code = -1;
+    // if (msg->data.result == CURLE_OK) {
+    //     curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &http_code);
+    // }
 
-    HttpRequest* request = iter->second.request_;
+    int http_code = 200;
+    // }
+
     if (http_code == 200 || http_code == 206) {
-        request->set_status(HttpRequest::Status::SUCCESS);
-        request->set_response(std::string(iter->second.buffer_->buffer(), iter->second.buffer_->used()));
+        iter->second.request_->set_status(HttpRequest::Status::SUCCESS);
+        iter->second.request_->set_response(std::string(iter->second.buffer_->buffer(), iter->second.buffer_->used()));
     } else {
-        request->set_status(HttpRequest::Status::FAILED);
-        request->set_http_code(http_code);
+        iter->second.request_->set_status(HttpRequest::Status::FAILED);
+        iter->second.request_->set_http_code(http_code);
     }
 
-    request->delegate()->OnHttpRequestComplete(request);
+    iter->second.request_->delegate()->OnHttpRequestComplete(iter->second.request_);
 
     // test {
     //request_list_.erase(request);

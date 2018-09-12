@@ -17,11 +17,11 @@ HttpRequest::~HttpRequest() {
     delegate_ = NULL;
 }
 
-void HttpRequest::Start() {
-    HttpManager::GetInstance()->AddHttpRequest(this);
+bool HttpRequest::Start(std::shared_ptr<HttpRequest> request) {
+    HttpManager::GetInstance()->AddHttpRequest(request);
 }
-void HttpRequest::Cancel() {
-    HttpManager::GetInstance()->CancelHttpRequest(this);
+bool HttpRequest::Cancel(std::shared_ptr<HttpRequest> request) {
+    HttpManager::GetInstance()->CancelHttpRequest(request);
 }
 
 int HttpRequest::http_code() {

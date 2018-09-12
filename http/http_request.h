@@ -1,7 +1,9 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <map>
+#include <memory>
 
 namespace http {
 
@@ -10,7 +12,7 @@ public:
     class Delegate
     {
     public:
-        virtual void OnHttpRequestComplete(HttpRequest* request) = 0;
+        virtual void OnHttpRequestComplete(std::shared_ptr<HttpRequest> request) = 0;
     };
 
     enum HttpMode
@@ -33,8 +35,8 @@ public:
                 Delegate* delegate);
     ~HttpRequest();
 
-    void Start();
-    void Cancel();
+    static bool Start(std::shared_ptr<HttpRequest> request);
+    static bool Cancel(std::shared_ptr<HttpRequest> request);
 
     int http_code();
     void set_http_code(int http_code);
