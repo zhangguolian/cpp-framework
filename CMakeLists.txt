@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.5.1)
 
 project(cpp_framework VERSION "1.0.0")
 
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    add_definitions(-DDEBUG)
+else()
+    set(CMAKE_BUILD_TYPE "Release")
+endif (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+
+message("-- Current Mode: " ${CMAKE_BUILD_TYPE})
+
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
 add_definitions(-std=c++11)
 
 find_package(Boost REQUIRED COMPONENTS system thread filesystem)
