@@ -1,5 +1,6 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <logs/logs.hpp>
 
 int main() {
     CURL *curl = curl_easy_init();
@@ -8,7 +9,7 @@ int main() {
         curl_easy_setopt(curl, CURLOPT_URL, "http://www.baidu.com");
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
-        printf("code:%d\n", res);
+        LOG_INFO("code:%d\n", res);
     }
 
     return 0;
