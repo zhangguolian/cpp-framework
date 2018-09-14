@@ -3,7 +3,7 @@ file(GLOB headers "*.h")
 
 add_library(async ${sources} ${headers})
 
-target_link_libraries(async)
+target_link_libraries(async ${Boost_LIBRARIES})
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/async/async.h

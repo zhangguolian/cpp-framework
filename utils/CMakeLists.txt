@@ -3,7 +3,7 @@ file(GLOB headers "*.h")
 
 add_library(utils ${sources} ${headers})
 
-target_link_libraries(utils)
+target_link_libraries(utils crypto)
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/utils/utils.h
