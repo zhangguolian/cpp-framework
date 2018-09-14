@@ -4,15 +4,16 @@
 #include <string.h>
 #include <openssl/sha.h>
 #include <openssl/md5.h> 
+#include <openssl/aes.h>
 
 namespace utils {
 
-std::string md5(const std::string& input) {
+std::string md5(const std::string& data) {
     char tmp[3] = {0};
     char result[33] = {0};
     unsigned char md[16] = {0};
 
-    MD5((const unsigned char *)input.c_str(), input.size(), md);
+    MD5((const unsigned char *)data.c_str(), data.size(), md);
 
     for (size_t i = 0; i < 16; i++){
         sprintf(tmp, "%2.2x", md[i]);
@@ -22,12 +23,12 @@ std::string md5(const std::string& input) {
     return result;
 }
 
-std::string sha256(const std::string& input) {
+std::string sha256(const std::string& data) {
     char tmp[3] = {0};
     char result[65] = {0};
     unsigned char md[33] = {0};
 
-	SHA256((const unsigned char *)input.c_str(), input.size(), md);
+	SHA256((const unsigned char *)data.c_str(), data.size(), md);
 
     for(size_t i = 0; i < 32; i++) {
         sprintf(tmp, "%02x", md[i]);
@@ -35,6 +36,76 @@ std::string sha256(const std::string& input) {
     }
 
     return result;
+}
+
+unsigned char* encode_aes(const std::string& data, 
+                          const std::string& password) {
+    size_t encry_size = 0;
+    if ((data.size() + 1) % AES_BLOCK_SIZE == 0) {
+        encry_size = data.size() + 1;
+    } else {
+        encry_size = ((data.size()+1)/AES_BLOCK_SIZE+1)*AES_BLOCK_SIZE;
+    }
+
+    // Generate AES 128-bit key
+    unsigned char key[AES_BLOCK_SIZE];
+    for (size_t i=0; i < 16; ++i) {
+        key[i] = 32 + i;
+    }
+
+    // Set encryption key
+    unsigned char iv[AES_BLOCK_SIZE];
+    for (size_t i = 0; i < AES_BLOCK_SIZE; ++i) {
+        iv[i] = 0;
+    }
+
+    AES_KEY aes_key;
+    if (AES_set_encrypt_key(key, 128, &aes_key) < 0) {
+        printf("Unable to set encryption key in AES\n");
+        return NULL;
+    }
+
+    unsigned char* input_string = (unsigned char*)calloc(encry_size, sizeof(unsigned char));
+    strncpy((char*)input_string, data.c_str(), data.size());
+    unsigned char* encrypt_string = (unsigned char*)calloc(encry_size, sizeof(unsigned char)); 
+    AES_cbc_encrypt(input_string, encrypt_string, encry_size, &aes_key, iv, AES_ENCRYPT);
+
+    for (size_t i=0; i<encry_size; ++i) {
+        printf("%x%x", (encrypt_string[i] >> 4) & 0xf, 
+                encrypt_string[i] & 0xf);    
+    }
+    printf("\n");
+
+    return encrypt_string;
+}
+
+std::string decode_aes(unsigned char* data, 
+                       const std::string& password) {
+    // Generate AES 128-bit key
+    unsigned char key[AES_BLOCK_SIZE];
+    for (size_t i=0; i < 16; ++i) {
+        key[i] = 32 + i;
+    }
+
+    // Set encryption key
+    unsigned char iv[AES_BLOCK_SIZE];
+    for (size_t i = 0; i < AES_BLOCK_SIZE; ++i) {
+        iv[i] = 0;
+    }
+
+    AES_KEY aes_key;
+    if (AES_set_decrypt_key(key, 128, &aes_key) < 0) {
+        printf("Unable to set encryption key in AES\n");
+        return "";
+    }
+
+    unsigned char* decrypt_string = (unsigned char*)calloc(16, sizeof(unsigned char)); 
+    AES_cbc_encrypt(data, decrypt_string, 16, &aes_key, iv, 
+            AES_DECRYPT);
+
+    printf("%s\n", decrypt_string);
+
+    return (char*)decrypt_string;
 }
 
 }
