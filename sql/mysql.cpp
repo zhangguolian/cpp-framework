@@ -22,19 +22,19 @@ bool Mysql::Init(int db_port,
                  const std::string& db_pass,
                  const std::string& db_name) {
     if (mysql_ != NULL) {
-        LOG_ERROR("Mysql::Init mysql repeat init\n");
+        LOG_ERROR("Mysql::Init mysql repeat init.");
         return false;
     }
 
     mysql_ = new MYSQL();
     if (mysql_init(mysql_) == NULL) {
-        LOG_ERROR("Mysql::Init mysql_init fail\n");
+        LOG_ERROR("Mysql::Init mysql_init fail.");
         return false;
     }
 
     if (mysql_real_connect(mysql_, db_host.c_str(), db_user.c_str(),
         db_pass.c_str(), db_name.c_str(), db_port, NULL, 0) == NULL) {
-        LOG_ERROR("Mysql::Init mysql_real_connect fail\n");
+        LOG_ERROR("Mysql::Init mysql_real_connect fail.");
         return false;
     }
 
@@ -42,7 +42,7 @@ bool Mysql::Init(int db_port,
 }
 bool Mysql::Exec(const std::string& sql) {
     if (mysql_query(mysql_, sql.c_str())) {
-        LOG_ERROR("Mysql::Exec mysql_query fail, error:%s\n", mysql_error(mysql_));
+        LOG_ERROR("Mysql::Exec mysql_query fail, error:%s.", mysql_error(mysql_));
         return false;
     }
 
@@ -53,7 +53,7 @@ bool Mysql::QueryRow(const std::string& sql,
     bool is_success = false;
 
     if (mysql_query(mysql_, sql.c_str())) {
-        LOG_ERROR("Mysql::QueryRow mysql_query fail, error:%s\n", mysql_error(mysql_));
+        LOG_ERROR("Mysql::QueryRow mysql_query fail, error:%s.", mysql_error(mysql_));
         return false;
     }
 
@@ -61,7 +61,7 @@ bool Mysql::QueryRow(const std::string& sql,
     result = mysql_store_result(mysql_);
 
     if (mysql_num_rows(result) == 0) {
-        LOG_ERROR("Mysql::QueryRow mysql_num_rows is 0\n");
+        LOG_ERROR("Mysql::QueryRow mysql_num_rows is 0.");
         goto exit;
     }
 
@@ -70,7 +70,7 @@ bool Mysql::QueryRow(const std::string& sql,
         MYSQL_ROW mysql_row = NULL;
         mysql_row = mysql_fetch_row(result);
         if (mysql_row == NULL) {
-            LOG_ERROR("Mysql::QueryRow mysql_fetch_row fail\n");
+            LOG_ERROR("Mysql::QueryRow mysql_fetch_row fail.");
             goto exit;
         }
 
@@ -99,7 +99,7 @@ bool Mysql::QueryRows(const std::string& sql,
     bool is_success = false;
 
     if (mysql_query(mysql_, sql.c_str())) {
-        LOG_ERROR("Mysql::QueryRow mysql_query fail, error:%s\n", mysql_error(mysql_));
+        LOG_ERROR("Mysql::QueryRow mysql_query fail, error:%s.", mysql_error(mysql_));
         return false;
     }
 
@@ -107,7 +107,7 @@ bool Mysql::QueryRows(const std::string& sql,
     result = mysql_store_result(mysql_);
 
     if (mysql_num_rows(result) == 0) {
-        LOG_ERROR("Mysql::QueryRow mysql_num_rows is 0\n");
+        LOG_ERROR("Mysql::QueryRow mysql_num_rows is 0.");
         goto exit;
     }
 
@@ -116,7 +116,7 @@ bool Mysql::QueryRows(const std::string& sql,
         MYSQL_ROW mysql_row = NULL;
         mysql_row = mysql_fetch_row(result);
         if (mysql_row == NULL) {
-            LOG_ERROR("Mysql::QueryRow mysql_fetch_row fail\n");
+            LOG_ERROR("Mysql::QueryRow mysql_fetch_row fail.");
             goto exit;
         }
 

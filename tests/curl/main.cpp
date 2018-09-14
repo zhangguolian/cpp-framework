@@ -9,7 +9,7 @@ int main() {
         curl_easy_setopt(curl, CURLOPT_URL, "http://www.baidu.com");
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
-        LOG_INFO("code:%d\n", res);
+        LOG_INFO("code:%d", res);
     }
 
     return 0;
