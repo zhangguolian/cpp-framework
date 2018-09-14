@@ -39,7 +39,7 @@ std::string sha256(const std::string& data) {
 }
 
 unsigned char* encode_aes(const std::string& data, 
-                          const std::string& password) {
+                          const char password[16]) {
     size_t encry_size = 0;
     if ((data.size() + 1) % AES_BLOCK_SIZE == 0) {
         encry_size = data.size() + 1;
@@ -52,6 +52,8 @@ unsigned char* encode_aes(const std::string& data,
     for (size_t i=0; i < 16; ++i) {
         key[i] = 32 + i;
     }
+
+    strcpy((char*)key, password);
 
     // Set encryption key
     unsigned char iv[AES_BLOCK_SIZE];
@@ -80,12 +82,14 @@ unsigned char* encode_aes(const std::string& data,
 }
 
 std::string decode_aes(unsigned char* data, 
-                       const std::string& password) {
+                       const char password[16]) {
     // Generate AES 128-bit key
     unsigned char key[AES_BLOCK_SIZE];
     for (size_t i=0; i < 16; ++i) {
         key[i] = 32 + i;
     }
+
+    strcpy((char*)key, password);
 
     // Set encryption key
     unsigned char iv[AES_BLOCK_SIZE];
