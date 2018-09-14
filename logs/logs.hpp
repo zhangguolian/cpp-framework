@@ -4,7 +4,7 @@
 #include <string>
 #include <utils/utils.h>
 
-bool is_debug() {
+inline bool is_debug() {
 #ifdef DEBUG
     return true;
 #endif
