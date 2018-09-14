@@ -25,8 +25,7 @@ int main()
         return -1;
     }
 
-    for (int i = 0; i < rows.size(); i++) {
-        printf("row:%d\n", i);
+    for (size_t i = 0; i < rows.size(); i++) {
         for (auto iter = rows[i].begin(); iter != rows[i].end(); iter++) {
             printf("name:%s, value:%s\n", iter->first.c_str(), iter->second.c_str());
         } 

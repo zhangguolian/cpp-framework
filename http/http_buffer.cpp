@@ -7,8 +7,8 @@
 namespace http {
 
 HttpBuffer::HttpBuffer(int size) 
-            : used_(0)
-            , size_(size) {
+            : size_(size)
+            , used_(0) {
     buffer_ = new char[size];
 }
 HttpBuffer::~HttpBuffer() {

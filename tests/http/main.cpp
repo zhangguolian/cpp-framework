@@ -24,14 +24,14 @@ public:
             "http://150.109.59.176/exchange/api/1.0/user/symbol/info", 
             this));
         request_->add_params("symbol", "btcusdt");
-        http::HttpRequest::Start(request_);
+        START_HTTP_REQUEST(request_);
     }
 
     std::shared_ptr<http::HttpRequest> request_;
 };
 
 int main() {
-    http::HttpManager::GetInstance()->Start();
+    HTTP_INIT();
 
     HttpTest http_test;
     http_test.Start();

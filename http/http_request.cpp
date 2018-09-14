@@ -17,13 +17,6 @@ HttpRequest::~HttpRequest() {
     delegate_ = NULL;
 }
 
-bool HttpRequest::Start(std::shared_ptr<HttpRequest> request) {
-    HttpManager::GetInstance()->AddHttpRequest(request);
-}
-bool HttpRequest::Cancel(std::shared_ptr<HttpRequest> request) {
-    HttpManager::GetInstance()->CancelHttpRequest(request);
-}
-
 int HttpRequest::http_code() {
     return http_code_;
 }

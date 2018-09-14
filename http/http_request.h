@@ -35,9 +35,6 @@ public:
                 Delegate* delegate);
     ~HttpRequest();
 
-    static bool Start(std::shared_ptr<HttpRequest> request);
-    static bool Cancel(std::shared_ptr<HttpRequest> request);
-
     int http_code();
     void set_http_code(int http_code);
 
