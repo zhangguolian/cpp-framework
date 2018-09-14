@@ -15,8 +15,9 @@ bool is_debug() {
     printf(format, __VA_ARGS__);
 
 #define LOG_DEBUG(format, ...)\
-    if (is_debug())\
-        LOG(debug, format, __VA_ARGS__);
+    if (is_debug()) {\
+        LOG(debug, format, __VA_ARGS__);\
+    }   
 
 #define LOG_INFO(format, ...)\
     LOG(info, format, __VA_ARGS__)
