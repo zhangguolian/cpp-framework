@@ -19,6 +19,7 @@ inline bool is_debug() {
         t->tm_year+1900, t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);\
     printf("[%s] [%s:%d]:", #type, __FUNCTION__, __LINE__);\
     printf(format, ##__VA_ARGS__);\
+    printf("\n");\
     }
 
 #define LOG_DEBUG(format, ...)\
