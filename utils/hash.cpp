@@ -51,7 +51,7 @@ std::string encode_aes(const std::string& data,
     AES_KEY aes_key;
     if (AES_set_encrypt_key((const unsigned char*)key, 128, &aes_key) < 0) {
         LOG_ERROR("Unable to set encryption key in AES.");
-        return NULL;
+        return "";
     }
 
     char iv[AES_BLOCK_SIZE] = {0};
