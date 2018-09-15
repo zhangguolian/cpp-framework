@@ -55,7 +55,8 @@
         "condition_variable": "cpp",
         "csignal": "cpp",
         "future": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "slist": "cpp"
     },
     "clang.diagnostic.enable": false,
     "C_Cpp.errorSquiggles": "Disabled"

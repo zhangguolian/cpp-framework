@@ -2,9 +2,7 @@
 
 #include <iostream>
 #include <string.h>
-#include <openssl/sha.h>
-#include <openssl/md5.h> 
-#include <openssl/aes.h>
+#include <logs/logs.hpp>
 
 namespace utils {
 
@@ -38,78 +36,61 @@ std::string sha256(const std::string& data) {
     return result;
 }
 
-unsigned char* encode_aes(const std::string& data, 
-                          const char password[16]) {
-    size_t encry_size = 0;
+std::string encode_aes(const std::string& data, 
+                       const char password[AES_BLOCK_SIZE]) {
+    size_t size = 0;
     if ((data.size() + 1) % AES_BLOCK_SIZE == 0) {
-        encry_size = data.size() + 1;
+        size = data.size() + 1;
     } else {
-        encry_size = ((data.size()+1)/AES_BLOCK_SIZE+1)*AES_BLOCK_SIZE;
+        size = ((data.size()+1)/AES_BLOCK_SIZE+1)*AES_BLOCK_SIZE;
     }
 
     // Generate AES 128-bit key
-    unsigned char key[AES_BLOCK_SIZE];
+    char key[AES_BLOCK_SIZE];
     for (size_t i=0; i < 16; ++i) {
         key[i] = 32 + i;
     }
 
-    strcpy((char*)key, password);
-
-    // Set encryption key
-    unsigned char iv[AES_BLOCK_SIZE];
-    for (size_t i = 0; i < AES_BLOCK_SIZE; ++i) {
-        iv[i] = 0;
-    }
+    strcpy(key, password);
 
     AES_KEY aes_key;
-    if (AES_set_encrypt_key(key, 128, &aes_key) < 0) {
-        printf("Unable to set encryption key in AES\n");
+    if (AES_set_encrypt_key((const unsigned char*)key, 128, &aes_key) < 0) {
+        LOG_ERROR("Unable to set encryption key in AES.");
         return NULL;
     }
 
-    unsigned char* input_string = (unsigned char*)calloc(encry_size, sizeof(unsigned char));
-    strncpy((char*)input_string, data.c_str(), data.size());
-    unsigned char* encrypt_string = (unsigned char*)calloc(encry_size, sizeof(unsigned char)); 
-    AES_cbc_encrypt(input_string, encrypt_string, encry_size, &aes_key, iv, AES_ENCRYPT);
+    char iv[AES_BLOCK_SIZE] = {0};
+    char* input = new char[size];
+    strncpy(input, data.c_str(), data.size());
+    char* encrypt = new char[size];
+    AES_cbc_encrypt((const unsigned char*)input, (unsigned char*)encrypt, 
+        size, &aes_key, (unsigned char*)iv, AES_ENCRYPT);
 
-    for (size_t i=0; i<encry_size; ++i) {
-        printf("%x%x", (encrypt_string[i] >> 4) & 0xf, 
-                encrypt_string[i] & 0xf);    
-    }
-    printf("\n");
-
-    return encrypt_string;
+    return std::string(encrypt, size);
 }
 
-std::string decode_aes(unsigned char* data, 
-                       const char password[16]) {
+std::string decode_aes(const std::string& data, 
+                       const char password[AES_BLOCK_SIZE]) {
     // Generate AES 128-bit key
-    unsigned char key[AES_BLOCK_SIZE];
+    char key[AES_BLOCK_SIZE];
     for (size_t i=0; i < 16; ++i) {
         key[i] = 32 + i;
     }
 
-    strcpy((char*)key, password);
-
-    // Set encryption key
-    unsigned char iv[AES_BLOCK_SIZE];
-    for (size_t i = 0; i < AES_BLOCK_SIZE; ++i) {
-        iv[i] = 0;
-    }
+    strcpy(key, password);
 
     AES_KEY aes_key;
-    if (AES_set_decrypt_key(key, 128, &aes_key) < 0) {
-        printf("Unable to set encryption key in AES\n");
+    if (AES_set_decrypt_key((const unsigned char *)key, 128, &aes_key) < 0) {
+        LOG_ERROR("Unable to set encryption key in AES.");
         return "";
     }
 
-    unsigned char* decrypt_string = (unsigned char*)calloc(strlen((char*)data), sizeof(unsigned char)); 
-    AES_cbc_encrypt(data, decrypt_string, strlen((char*)data), &aes_key, iv, 
-            AES_DECRYPT);
+    char iv[AES_BLOCK_SIZE] = {0};
+    char* decrypt = new char[data.size()];
+    AES_cbc_encrypt((const unsigned char *)data.c_str(), (unsigned char *)decrypt, 
+        data.size(), &aes_key, (unsigned char *)iv, AES_DECRYPT);
 
-    printf("%s\n", decrypt_string);
-
-    return (char*)decrypt_string;
+    return std::string((char*)decrypt);
 }
 
 }
