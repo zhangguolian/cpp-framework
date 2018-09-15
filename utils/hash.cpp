@@ -45,7 +45,6 @@ std::string encode_aes(const std::string& data,
         size = ((data.size()+1)/AES_BLOCK_SIZE+1)*AES_BLOCK_SIZE;
     }
 
-    // Generate AES 128-bit key
     char key[AES_BLOCK_SIZE] = {0};
     strcpy(key, password);
 
@@ -68,7 +67,6 @@ std::string encode_aes(const std::string& data,
 
 std::string decode_aes(const std::string& data, 
                        const char password[AES_BLOCK_SIZE]) {
-    // Generate AES 128-bit key
     char key[AES_BLOCK_SIZE] = {0};
     strcpy(key, password);
 
