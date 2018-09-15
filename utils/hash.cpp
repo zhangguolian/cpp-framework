@@ -46,11 +46,7 @@ std::string encode_aes(const std::string& data,
     }
 
     // Generate AES 128-bit key
-    char key[AES_BLOCK_SIZE];
-    for (size_t i=0; i < 16; ++i) {
-        key[i] = 32 + i;
-    }
-
+    char key[AES_BLOCK_SIZE] = {0};
     strcpy(key, password);
 
     AES_KEY aes_key;
@@ -60,23 +56,20 @@ std::string encode_aes(const std::string& data,
     }
 
     char iv[AES_BLOCK_SIZE] = {0};
-    char* input = new char[size];
-    strncpy(input, data.c_str(), data.size());
     char* encrypt = new char[size];
-    AES_cbc_encrypt((const unsigned char*)input, (unsigned char*)encrypt, 
+    AES_cbc_encrypt((const unsigned char*)data.c_str(), (unsigned char*)encrypt, 
         size, &aes_key, (unsigned char*)iv, AES_ENCRYPT);
 
-    return std::string(encrypt, size);
+    std::string result(encrypt, size);
+    delete []encrypt;
+
+    return result;
 }
 
 std::string decode_aes(const std::string& data, 
                        const char password[AES_BLOCK_SIZE]) {
     // Generate AES 128-bit key
-    char key[AES_BLOCK_SIZE];
-    for (size_t i=0; i < 16; ++i) {
-        key[i] = 32 + i;
-    }
-
+    char key[AES_BLOCK_SIZE] = {0};
     strcpy(key, password);
 
     AES_KEY aes_key;
@@ -90,7 +83,10 @@ std::string decode_aes(const std::string& data,
     AES_cbc_encrypt((const unsigned char *)data.c_str(), (unsigned char *)decrypt, 
         data.size(), &aes_key, (unsigned char *)iv, AES_DECRYPT);
 
-    return std::string((char*)decrypt);
+    std::string result(decrypt);
+    delete []decrypt;
+
+    return result;
 }
 
 }
