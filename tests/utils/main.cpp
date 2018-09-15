@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     // std::string daes = utils::decode_aes(eaes, "123456");
     // std::cout << daes << std::endl;
 
-    auto output =  utils::encode_aes("test", "123456");
+    auto output =  utils::encode_aes("test333333333333333333333333333333333333", "123456");
     std::cout << utils::decode_aes(output, "123456") << std::endl;
 
     return 0;

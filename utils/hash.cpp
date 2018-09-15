@@ -103,8 +103,8 @@ std::string decode_aes(unsigned char* data,
         return "";
     }
 
-    unsigned char* decrypt_string = (unsigned char*)calloc(16, sizeof(unsigned char)); 
-    AES_cbc_encrypt(data, decrypt_string, 16, &aes_key, iv, 
+    unsigned char* decrypt_string = (unsigned char*)calloc(strlen((char*)data), sizeof(unsigned char)); 
+    AES_cbc_encrypt(data, decrypt_string, strlen((char*)data), &aes_key, iv, 
             AES_DECRYPT);
 
     printf("%s\n", decrypt_string);
