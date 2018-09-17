@@ -1,10 +1,10 @@
-#include <utils/hash.h>
+#include <base/hash.h>
 
 #include <iostream>
 #include <string.h>
 #include <logs/logs.hpp>
 
-namespace utils {
+namespace base {
 
 std::string md5(const std::string& data) {
     char tmp[3] = {0};

@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <utils/utils.h>
 
 inline bool is_debug() {
 #ifdef DEBUG

@@ -5,7 +5,7 @@
 #include <openssl/md5.h> 
 #include <openssl/aes.h>
 
-namespace utils {
+namespace base {
 
 std::string md5(const std::string& data);
 std::string sha256(const std::string& data);

@@ -4,7 +4,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <http/http_request.h>
-#include <utils/utils.h>
+#include <base/base.h>
 
 namespace http {
 
@@ -97,11 +97,11 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
     std::string url = request->url();
     if (!request->params().empty()) {
         if (request->http_mode() == HttpRequest::HttpMode::GET) {
-            url += "?" + utils::Map2UrlQuery(request->params());
+            url += "?" + base::Map2UrlQuery(request->params());
         } else {
             curl_data->headers_ = curl_slist_append(curl_data->headers_, "Content-Type: application/x-www-form-urlencoded");
             curl_data->headers_ = curl_slist_append(curl_data->headers_, "Accept-Language: zh-cn");
-            curl_data->post_data_ = utils::Map2UrlQuery(request->params());
+            curl_data->post_data_ = base::Map2UrlQuery(request->params());
             curl_easy_setopt(curl_data->curl_, CURLOPT_HTTPHEADER, curl_data->headers_);
             curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDSIZE, curl_data->post_data_.size());
             curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDS, curl_data->post_data_.c_str());

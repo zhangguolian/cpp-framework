@@ -3,7 +3,7 @@ file(GLOB headers "*.h")
 
 add_library(http ${sources} ${headers})
 
-target_link_libraries(http utils curl ${Boost_LIBRARIES})
+target_link_libraries(http base curl ${Boost_LIBRARIES})
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/http/http.h

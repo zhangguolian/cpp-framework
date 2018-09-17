@@ -21,7 +21,7 @@ find_package(Boost REQUIRED COMPONENTS system thread filesystem)
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})  
 
-add_subdirectory(utils)
+add_subdirectory(base)
 add_subdirectory(http)
 add_subdirectory(async)
 add_subdirectory(sql)

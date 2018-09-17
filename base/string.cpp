@@ -1,7 +1,7 @@
-#include <utils/string.h>
+#include <base/string.h>
 #include <stdarg.h>
 
-namespace utils {
+namespace base {
 
 std::string Map2UrlQuery(const std::map<std::string, std::string> params) {
     std::string str_params = "";

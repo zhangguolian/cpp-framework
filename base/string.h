@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-namespace utils {
+namespace base {
 
 std::string Map2UrlQuery(const std::map<std::string, std::string> params);
 std::string StringPrintf(const char* format,  ...);
