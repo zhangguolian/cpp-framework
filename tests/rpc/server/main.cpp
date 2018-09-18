@@ -5,7 +5,7 @@
 RPC_SERVICE_METHOD(RpcTestService, Search) {
     printf("RpcTestService Search req:%s\n", request->request().c_str());
     response->set_result("success");
-    return grpc::Status::OK;
+    return rpc::Status::OK;
 }
 
 int main() {

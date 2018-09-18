@@ -5,6 +5,8 @@
 
 namespace rpc {
 
+typedef grpc::Status Status;
+
 class RpcServer {
 public:
     static RpcServer* GetInstance();
