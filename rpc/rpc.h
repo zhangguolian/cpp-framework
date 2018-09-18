@@ -2,6 +2,9 @@
 
 #include <rpc/server.h>
 
+#define START_RPC_SERVER(port)\
+    rpc::RpcServer::GetInstance()->Run(port);
+
 #define RPC_SERVICE_METHOD(service, method)\
 class Rpc##service##method final : public service::Service {\
     grpc::Status method(grpc::ServerContext* context,\

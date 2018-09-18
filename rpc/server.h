@@ -9,7 +9,7 @@ class RpcServer {
 public:
     static RpcServer* GetInstance();
     
-    void Run();
+    void Run(int port);
     void RegisterService(grpc::Service* service);
 
 private:
