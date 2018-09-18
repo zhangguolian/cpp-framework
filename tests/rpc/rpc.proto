@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message RpcTestServiceRequest {
+    string Request = 1;
+}
+
+message RpcTestServiceResponse {
+    bool Status = 2;
+    int32 Code = 3;
+    string Err_Msg = 4;
+    string Result = 5;
+}
+
+service RpcTestService {
+    rpc Search (RpcTestServiceRequest) returns (RpcTestServiceResponse);
+}
