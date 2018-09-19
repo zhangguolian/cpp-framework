@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     args::ArgsParse args_parse("Usage");
 
     args_parse.Add("help", "help args");
-    std::shared_ptr<int> type = args_parse.Get<int>("type", 0, "type args");
+    std::unique_ptr<int> type = args_parse.Get<int>("type", 0, "type args");
 
     args_parse.Parse(argc, argv);
 

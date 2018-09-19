@@ -27,10 +27,10 @@ public:
              const std::string& description);
              
     template<typename T>
-    std::shared_ptr<T> Get(const std::string& name,
+    std::unique_ptr<T> Get(const std::string& name,
                            const T& default_value,
                            const std::string& description) {
-        std::shared_ptr<T> result;
+        std::unique_ptr<T> result;
         result.reset(new T());
 
         desc_.add_options()(
