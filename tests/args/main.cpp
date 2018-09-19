@@ -3,8 +3,7 @@
 #include <iostream>
 #include <args/args.h>
     
-int main(int argc, char* argv[])  
-{  
+int main(int argc, char* argv[]) {  
     args::ArgsParse args_parse("Usage");
 
     args_parse.Add("help", "help args");

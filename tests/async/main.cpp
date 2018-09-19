@@ -1,7 +1,6 @@
 #include <async/async.h>
 
-void print(int a, int b)
-{
+void print(int a, int b) {
     std::cout<< "print:" << a+b << std::endl;
 }
 
