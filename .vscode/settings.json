@@ -56,7 +56,9 @@
         "csignal": "cpp",
         "future": "cpp",
         "mutex": "cpp",
-        "slist": "cpp"
+        "slist": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp"
     },
     "clang.diagnostic.enable": false,
     "C_Cpp.errorSquiggles": "Disabled"
