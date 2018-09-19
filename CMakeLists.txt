@@ -15,7 +15,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 add_definitions(-std=c++11)
 
-find_package(Boost REQUIRED COMPONENTS system thread filesystem)
+find_package(Boost REQUIRED COMPONENTS system thread filesystem program_options)
 
 #Global include path for all libs.
 include_directories(${CMAKE_SOURCE_DIR})
@@ -27,4 +27,5 @@ add_subdirectory(async)
 add_subdirectory(sql)
 add_subdirectory(logs)
 add_subdirectory(rpc)
+add_subdirectory(args)
 add_subdirectory(tests)
