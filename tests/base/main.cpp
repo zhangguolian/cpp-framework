@@ -17,6 +17,10 @@ int main(int argc, char** argv) {
     std::cout << base::decode_aes(output, "123456") << std::endl;
 
     std::cout << base::Rand(0.0, 1.0) << std::endl;
+    std::cout << base::Rand(0.0, 1.0) << std::endl;
+    std::cout << base::Rand(0.0, 1.0) << std::endl;
+    std::cout << base::Rand(0, 100) << std::endl;
+    std::cout << base::Rand(0, 100) << std::endl;
     std::cout << base::Rand(0, 100) << std::endl;
 
     return 0;
