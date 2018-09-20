@@ -5,7 +5,8 @@
 namespace async {
 
 Timer::Timer()
-      : is_running_(false) {
+      : timer_id_(1)
+      , is_running_(false) {
 
 }
 Timer::~Timer() {
@@ -60,6 +61,14 @@ void Timer::CancelTimerTask(int timer_id) {
 
     return;
 }
+void Timer::CreateOnceTimerTask(boost::function<void(void)> task, 
+                                int delay_seconds,
+                                std::shared_ptr<Thread> task_thread) {
+    std::shared_ptr<boost::asio::deadline_timer> timer;
+    timer.reset(new boost::asio::deadline_timer(io_service_, boost::posix_time::seconds(delay_seconds)));
+    timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
+        0, delay_seconds, task, task_thread));
+}
 
 void Timer::TimerThread() {
     boost::asio::io_service::work work(io_service_);
@@ -75,7 +84,7 @@ void Timer::TimerCallBack(const boost::system::error_code& err,
                           boost::function<void(void)> task,
                           std::shared_ptr<Thread> task_thread) {
     mutex_.lock();
-    if (timer_list_.find(timer_id) == timer_list_.end()) {
+    if (timer_id != 0 && timer_list_.find(timer_id) == timer_list_.end()) {
         mutex_.unlock();
         return;
     }
@@ -83,7 +92,7 @@ void Timer::TimerCallBack(const boost::system::error_code& err,
 
     task_thread->PostTask(task);
 
-    if (delay_seconds > 0) {
+    if (timer_id != 0) {
         timer->expires_at(timer->expires_at() + boost::posix_time::seconds(delay_seconds)) ;
         timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
             timer_id, delay_seconds, task, task_thread));

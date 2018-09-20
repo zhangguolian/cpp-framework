@@ -19,7 +19,6 @@ public:
     void Join();
 
     void PostTask(boost::function<void(void)> task);
-    //void PostDelayTask(Function task);
 
 private:
     void TaskThread();

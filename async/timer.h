@@ -22,6 +22,9 @@ public:
                         int delay_seconds,
                         std::shared_ptr<Thread> task_thread);
     void CancelTimerTask(int timer_id);
+    void CreateOnceTimerTask(boost::function<void(void)> task, 
+                             int delay_seconds,
+                             std::shared_ptr<Thread> task_thread);
 
 private:
     void TimerThread();
