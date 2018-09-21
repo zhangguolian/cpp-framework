@@ -14,7 +14,7 @@ void print_once(int a, int b) {
 
 int main() {
     std::shared_ptr<async::Thread> main_thread;
-    main_thread.reset(new async::Thread(1));
+    main_thread.reset(new async::Thread());
     async::Timer timer; 
     async::Timer timer1; 
 
