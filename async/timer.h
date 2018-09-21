@@ -10,13 +10,23 @@ namespace async {
 
 class Thread;
 
+class TimerDevice {
+private:
+    TimerDevice();
+    ~TimerDevice();
+
+    void TimerThread();
+
+    boost::thread thread_;
+    boost::asio::io_service io_service_;
+
+    friend class Timer;
+};
+
 class Timer {
 public:
     Timer();
     ~Timer();
-
-    void Start();
-    void Stop();
   
     int CreateTimerTask(boost::function<void(void)> task, 
                         int delay_seconds,
@@ -27,7 +37,6 @@ public:
                              std::shared_ptr<Thread> task_thread);
 
 private:
-    void TimerThread();
     void TimerCallBack(const boost::system::error_code& err, 
                        std::shared_ptr<boost::asio::deadline_timer> timer,
                        int timer_id,
@@ -37,11 +46,9 @@ private:
 
 private:
     int timer_id_;
-    bool is_running_;
     boost::mutex mutex_;
-    boost::thread thread_;
-    boost::asio::io_service io_service_;
     std::map<int, std::shared_ptr<boost::asio::deadline_timer>> timer_list_;
+    static TimerDevice timer_device_;
 };
 
 };
