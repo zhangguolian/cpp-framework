@@ -24,11 +24,26 @@ std::string md5(const std::string& data) {
 std::string sha256(const std::string& data) {
     char tmp[3] = {0};
     char result[65] = {0};
-    unsigned char md[33] = {0};
+    unsigned char md[32] = {0};
 
 	SHA256((const unsigned char *)data.c_str(), data.size(), md);
 
     for(size_t i = 0; i < 32; i++) {
+        sprintf(tmp, "%02x", md[i]);
+        strcat(result, tmp);
+    }
+
+    return result;
+}
+
+std::string sha512(const std::string& data) {
+    char tmp[3] = {0};
+    char result[129] = {0};
+    unsigned char md[64] = {0};
+
+	SHA512((const unsigned char *)data.c_str(), data.size(), md);
+
+    for(size_t i = 0; i < 64; i++) {
         sprintf(tmp, "%02x", md[i]);
         strcat(result, tmp);
     }

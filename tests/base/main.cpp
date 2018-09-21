@@ -5,8 +5,9 @@
 
 int main(int argc, char** argv) {
     std::cout << base::StringPrintf("test%d, test%s", 1, "2") << std::endl;
-    std::cout << base::md5("test") << std::endl;
-    std::cout << base::sha256("test") << std::endl;
+    std::cout << "md5:" << base::md5("test") << std::endl;
+    std::cout << "sha256:" << base::sha256("test") << std::endl;
+    std::cout << "sha512:" << base::sha512("test") << std::endl;
     
     // std::string eaes = base::encode_aes("test", "123456");
     // std::cout << eaes << std::endl;
