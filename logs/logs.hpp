@@ -19,6 +19,7 @@ inline bool is_debug() {
     printf("[%s] [%s:%d]:", #type, __FUNCTION__, __LINE__);\
     printf(format, ##__VA_ARGS__);\
     printf("\n");\
+    fflush(stdout);\
     }
 
 #define LOG_DEBUG(format, ...)\
