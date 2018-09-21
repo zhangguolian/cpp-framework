@@ -21,6 +21,36 @@ std::string md5(const std::string& data) {
     return result;
 }
 
+std::string sha1(const std::string& data) {
+    char tmp[3] = {0};
+    char result[41] = {0};
+    unsigned char md[20] = {0};
+
+	SHA1((const unsigned char *)data.c_str(), data.size(), md);
+
+    for(size_t i = 0; i < 20; i++) {
+        sprintf(tmp, "%02x", md[i]);
+        strcat(result, tmp);
+    }
+
+    return result;
+}
+
+std::string sha224(const std::string& data) {
+    char tmp[3] = {0};
+    char result[57] = {0};
+    unsigned char md[28] = {0};
+
+	SHA224((const unsigned char *)data.c_str(), data.size(), md);
+
+    for(size_t i = 0; i < 28; i++) {
+        sprintf(tmp, "%02x", md[i]);
+        strcat(result, tmp);
+    }
+
+    return result;
+}
+
 std::string sha256(const std::string& data) {
     char tmp[3] = {0};
     char result[65] = {0};
@@ -34,6 +64,21 @@ std::string sha256(const std::string& data) {
     }
 
     return result;
+}
+
+std::string sha384(const std::string& data) {
+    char tmp[3] = {0};
+    char result[97] = {0};
+    unsigned char md[48] = {0};
+
+	SHA384((const unsigned char *)data.c_str(), data.size(), md);
+
+    for(size_t i = 0; i < 48; i++) {
+        sprintf(tmp, "%02x", md[i]);
+        strcat(result, tmp);
+    }
+
+    return result; 
 }
 
 std::string sha512(const std::string& data) {
