@@ -46,3 +46,4 @@ RpcTmp##service##method g_rpc_##service##method;\
 grpc::Status Rpc##service##method::method(grpc::ServerContext* context,\
                                           const service##Request* request,\
                                           service##Response* response)
+                                          
