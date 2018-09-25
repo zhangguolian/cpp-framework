@@ -21,7 +21,7 @@ RPC_METHOD_DEFINE(RpcTestService, Search) {
 }
 
 int main() {
-    START_RPC_SERVER(50051);
+    START_RPC_SERVER("127.0.0.1", 50051);
 
     return 0;
 }

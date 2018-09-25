@@ -11,7 +11,7 @@ class RpcServer {
 public:
     static RpcServer* GetInstance();
     
-    void Run(int port);
+    void Run(const std::string& host, int port);
     void RegisterService(grpc::Service* service);
 
 private:

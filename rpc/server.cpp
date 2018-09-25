@@ -22,8 +22,8 @@ RpcServer* RpcServer::GetInstance() {
     return rpc_server_;
 }
     
-void RpcServer::Run(int port) {
-    std::string server_address = base::StringPrintf("0.0.0.0:%d", port);
+void RpcServer::Run(const std::string& host, int port) {
+    std::string server_address = base::StringPrintf("%s:%d", host.c_str(), port);
     builder_.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     server_ = builder_.BuildAndStart();
 

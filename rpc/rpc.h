@@ -2,8 +2,8 @@
 
 #include <rpc/server.h>
 
-#define START_RPC_SERVER(port)\
-    rpc::RpcServer::GetInstance()->Run(port);
+#define START_RPC_SERVER(host, port)\
+    rpc::RpcServer::GetInstance()->Run(host, port);
 
 #define RPC_SERVICE(service)\
 class Rpc##service final : public service::Service
