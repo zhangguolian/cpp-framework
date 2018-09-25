@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string.h>
 #include <logs/logs.hpp>
+#include <event2/http.h>
 
 namespace base {
 
@@ -144,6 +145,29 @@ std::string decode_aes(const std::string& data,
     std::string result(decrypt);
     delete []decrypt;
 
+    return result;
+}
+
+std::string url_encode(const std::string& data) {
+    std::string result;
+    if (!data.empty()) {
+        char *encoded = evhttp_uriencode(data.c_str(), data.size(), false);
+        if (encoded) {
+            result = std::string(encoded);
+            free(encoded);
+        }
+    }
+    return result;
+}
+std::string url_decode(const std::string& data) {
+    std::string result;
+    if (!data.empty()) {
+        char *decoded = evhttp_uridecode(data.c_str(), false, NULL);
+        if (decoded) {
+            result = std::string(decoded);
+            free(decoded);
+        }
+    }
     return result;
 }
 

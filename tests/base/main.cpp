@@ -27,5 +27,9 @@ int main(int argc, char** argv) {
     std::cout << base::Rand(0, 100) << std::endl;
     std::cout << base::Rand(0, 100) << std::endl;
 
+    std::string urlencode = base::url_encode("+8615818225465");
+    std::cout << "url encode:" << urlencode << std::endl;
+    std::cout << "url decode:" << base::url_decode(urlencode) << std::endl;
+
     return 0;
 }

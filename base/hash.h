@@ -18,4 +18,7 @@ std::string encode_aes(const std::string& data,
 std::string decode_aes(const std::string& data, 
                        const char password[AES_BLOCK_SIZE]);
 
+std::string url_encode(const std::string& data);
+std::string url_decode(const std::string& data);
+
 };
