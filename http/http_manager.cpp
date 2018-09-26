@@ -147,7 +147,7 @@ int HttpManager::CurlSelect() {
     timeout_tv.tv_usec = 500 * 1000;
 
     long curl_timeo = -1;
-    ret = curl_multi_timeout(curl_m_, &curl_timeo); // curl_timeo ��λ�Ǻ���
+    ret = curl_multi_timeout(curl_m_, &curl_timeo); 
     if (curl_timeo >= 0) {
         timeout_tv.tv_sec = curl_timeo / 1000;
         if (timeout_tv.tv_sec > 1)
@@ -156,6 +156,7 @@ int HttpManager::CurlSelect() {
             timeout_tv.tv_usec = (curl_timeo % 1000) * 1000;
     }
 
+    /* get file descriptors from the transfers */
     curl_multi_fdset(curl_m_, &fd_read, &fd_write, &fd_except, &max_fd);
 
     /**
@@ -221,9 +222,9 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
 
     iter->second.request_->delegate()->OnHttpRequestComplete(iter->second.request_);
 
+    curl_multi_remove_handle(curl_m_, msg->easy_handle);
     request_list_.erase(iter->second.request_);
     callback_data_list_.erase(msg->easy_handle);
-    curl_multi_remove_handle(curl_m_, msg->easy_handle);
 
     mutex_.unlock();
 
