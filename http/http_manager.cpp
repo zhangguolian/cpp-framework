@@ -33,6 +33,7 @@ void HttpManager::Start() {
     }
 
     is_running_ = true;
+    curl_global_init(CURL_GLOBAL_ALL);
     curl_m_ = curl_multi_init();
     
     boost::thread work_thread(boost::bind(
@@ -149,9 +150,9 @@ int HttpManager::CurlSelect() {
     if (curl_timeo >= 0) {
         timeout_tv.tv_sec = curl_timeo / 1000;
         if (timeout_tv.tv_sec > 1)
-        timeout_tv.tv_sec = 1;
+            timeout_tv.tv_sec = 1;
         else
-        timeout_tv.tv_usec = (curl_timeo % 1000) * 1000;
+            timeout_tv.tv_usec = (curl_timeo % 1000) * 1000;
     }
 
     curl_multi_fdset(curl_m_, &fd_read, &fd_write, &fd_except, &max_fd);
