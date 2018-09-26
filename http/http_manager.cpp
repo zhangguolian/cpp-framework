@@ -120,6 +120,7 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
     }  
 
     curl_easy_setopt(curl_data->curl_, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl_data->curl_, CURLOPT_TIMEOUT, 10);
     curl_easy_setopt(curl_data->curl_, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt(curl_data->curl_, CURLOPT_MAXREDIRS, 5);
     curl_easy_setopt(curl_data->curl_, CURLOPT_FOLLOWLOCATION, 1);
