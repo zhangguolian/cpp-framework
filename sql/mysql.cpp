@@ -61,7 +61,6 @@ bool Mysql::QueryRow(const std::string& sql,
     result = mysql_store_result(mysql_);
 
     if (mysql_num_rows(result) == 0) {
-        LOG_ERROR("Mysql::QueryRow mysql_num_rows is 0.");
         goto exit;
     }
 
