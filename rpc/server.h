@@ -7,6 +7,7 @@ namespace rpc {
 
 typedef grpc::Status Status;
 typedef grpc::StatusCode StatusCode;
+typedef grpc::ClientContext ClientContext;
 
 class RpcServer {
 public:

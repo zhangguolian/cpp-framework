@@ -8,5 +8,6 @@ target_link_libraries(rpc base grpc++)
 install(FILES 
         ${PROJECT_SOURCE_DIR}/rpc/rpc.h
         ${PROJECT_SOURCE_DIR}/rpc/server.h
+        ${PROJECT_SOURCE_DIR}/rpc/client.h
         DESTINATION /usr/local/include/rpc/)
 install(TARGETS rpc ARCHIVE DESTINATION /usr/local/lib/)

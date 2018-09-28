@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <rpc/server.h>
+#include <rpc/client.h>
 
 #define START_RPC_SERVER(host, port)\
     rpc::RpcServer::GetInstance()->Run(host, port);
