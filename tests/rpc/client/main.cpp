@@ -4,6 +4,7 @@
 
 #include <rpc/rpc.h>
 #include <tests/rpc/rpc.grpc.pb.h>
+#include <jsoncpp/json/json.h>
 
 
 class RpcTestClient : public rpc::RpcClientBase<RpcTestService, RpcTestService::Stub>   {
@@ -21,7 +22,7 @@ public:
     std::string Search(const std::string& user) {
         // Data we are sending to the server.
         RpcTestServiceRequest request;
-        request.set_request("test");
+        request.set_request(user);
 
         // Container for the data we expect from the server.
         RpcTestServiceResponse response;
@@ -49,8 +50,10 @@ int main(int argc, char** argv) {
     // are created. This channel models a connection to an endpoint (in this case,
     // localhost at port 50051). We indicate that the channel isn't authenticated
     // (use of InsecureChannelCredentials()).
+    Json::Value value;
+    value["test"] = Json::Value("test");
     RpcTestClient rpc_client("localhost:50051");
-    std::string user("world");
+    std::string user(value.toStyledString());
     std::string reply = rpc_client.Search(user);
     std::cout << "Rpc client received: " << reply << std::endl;
 
