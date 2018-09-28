@@ -6,7 +6,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions(-DDEBUG)
 else()
     set(CMAKE_BUILD_TYPE "Release")
-endif (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 
 message("-- Current Mode: " ${CMAKE_BUILD_TYPE})
 
