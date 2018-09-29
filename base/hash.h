@@ -35,7 +35,7 @@ std::string encode_base64(const std::string& data);
 std::string decode_base64(const std::string& data);
 
 
-std::string url_encode(const std::string& data);
-std::string url_decode(const std::string& data);
+std::string encode_url(const std::string& data);
+std::string decode_url(const std::string& data);
 
 };

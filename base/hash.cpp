@@ -378,7 +378,7 @@ std::string decode_base64(const std::string& data) {
     return result;
 }
 
-std::string url_encode(const std::string& data) {
+std::string encode_url(const std::string& data) {
     std::string result;
     if (!data.empty()) {
         char *encoded = evhttp_uriencode(data.c_str(), data.size(), false);
@@ -389,7 +389,7 @@ std::string url_encode(const std::string& data) {
     }
     return result;
 }
-std::string url_decode(const std::string& data) {
+std::string decode_url(const std::string& data) {
     std::string result;
     if (!data.empty()) {
         char *decoded = evhttp_uridecode(data.c_str(), false, NULL);

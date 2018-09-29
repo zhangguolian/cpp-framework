@@ -39,9 +39,9 @@ int main(int argc, char** argv) {
     std::cout << "encode_rsa:" << encode_data << std::endl;
     std::cout << "decode_rsa:" << decode_data << std::endl;
 
-    std::string urlencode = base::url_encode("+8615818225465");
+    std::string urlencode = base::encode_url("+8615818225465");
     std::cout << "url encode:" << urlencode << std::endl;
-    std::cout << "url decode:" << base::url_decode(urlencode) << std::endl;
+    std::cout << "url decode:" << base::decode_url(urlencode) << std::endl;
 
     return 0;
 }
