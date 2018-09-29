@@ -181,8 +181,8 @@ bool new_rsa(int bits,
         goto exit;
     }
 
-    private_key = std::string(privatekey, bits);
-    public_key = std::string(publickey, bits);
+    private_key = std::string(privatekey);
+    public_key = std::string(publickey);
 
     is_success = true;
 
