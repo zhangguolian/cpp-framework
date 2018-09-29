@@ -27,14 +27,15 @@ int main(int argc, char** argv) {
     std::cout << base::Rand(0, 100) << std::endl;
     std::cout << base::Rand(0, 100) << std::endl;
 
-    std::string data = "test123123123123123123";
+    std::string data = "0xb68788c83c2f1124578799e618c40c9467103160b68788c83c2f1124578799e618c40c9467103160";
     std::string public_key, private_key;
     std::string encode_data;
     std::string decode_data;
-    base::new_rsa(512, public_key, private_key);
+    base::new_rsa(1024, public_key, private_key);
     base::encode_rsa(data, public_key, encode_data);
-    encode_data = base::url_encode(encode_data);
-    encode_data = base::url_decode(encode_data);
+    int out;
+    encode_data = base::encode_base64(encode_data); 
+    encode_data = base::decode_base64(encode_data); 
     base::decode_rsa(encode_data, private_key, decode_data);
     std::cout << "encode_rsa:" << encode_data << std::endl;
     std::cout << "decode_rsa:" << decode_data << std::endl;
