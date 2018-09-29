@@ -33,7 +33,6 @@ int main(int argc, char** argv) {
     std::string decode_data;
     base::new_rsa(1024, public_key, private_key);
     base::encode_rsa(data, public_key, encode_data);
-    int out;
     encode_data = base::encode_base64(encode_data); 
     encode_data = base::decode_base64(encode_data); 
     base::decode_rsa(encode_data, private_key, decode_data);
