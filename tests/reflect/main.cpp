@@ -16,6 +16,9 @@ template<class T>
 void ReflectMember(const T& data) {
     auto members = REFLECH_MEMBERS(T);
     for (size_t i = 0; i < members.size(); i++) {
+        if (reflect::TypeIsString(members[i].type)) {
+            printf("this is string type, ");
+        }
         printf("%s %s\n", members[i].type.c_str(), members[i].name.c_str());
     }
 }
