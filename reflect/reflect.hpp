@@ -56,6 +56,6 @@ Reflect<T>* Reflect<T>::reflect_ = NULL;
 #define REFLECT_UNREGIST(T, obj)\
     reflect::Reflect<T>::GetInstance()->remove_member((void*)obj);
   
-#define REFLECH_MEMBERS(T, obj)\
+#define REFLECT_MEMBERS(T, obj)\
     reflect::Reflect<T>::GetInstance()->member_list((void*)obj);
     

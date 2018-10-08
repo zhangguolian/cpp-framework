@@ -11,7 +11,7 @@ template<class T>
 std::string JsonMarshal(const T& data) {
     Json::Value json_value;
 
-    auto members = REFLECH_MEMBERS(T, &data);
+    auto members = REFLECT_MEMBERS(T, &data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             json_value[members[i].name] = *(int*)members[i].value;
@@ -40,6 +40,42 @@ std::string JsonMarshal(const T& data) {
 template<class T>
 bool JsonUnmarshal(const std::string& data,
                    T& result) {
+    auto members = REFLECT_MEMBERS(T, &result);
+
+    Json::Value json_value;
+    Json::Reader json_reader; 
+    try {
+        if (!json_reader.parse(data, json_value)) {
+            LOG_ERROR("JsonUnmarshal json_reader.parse fail.");
+            return false;  
+        }
+
+        for (size_t i = 0; i < members.size(); i++) {
+            if (reflect::TypeIsInt(members[i].type)) {
+                *(int*)members[i].value = json_value[members[i].name].asInt();
+            } else if (reflect::TypeIsInt64(members[i].type)) {
+                *(int64_t*)members[i].value = json_value[members[i].name].asInt64();
+            } else if (reflect::TypeIsUInt(members[i].type)) {
+                *(uint*)members[i].value = json_value[members[i].name].asUInt();
+            } else if (reflect::TypeIsUInt64(members[i].type)) {
+                *(uint64_t*)members[i].value = json_value[members[i].name].asUInt64();
+            } else if (reflect::TypeIsFloat(members[i].type)) {
+                *(float*)members[i].value = json_value[members[i].name].asFloat();
+            } else if (reflect::TypeIsDouble(members[i].type)) {
+                *(double*)members[i].value = json_value[members[i].name].asDouble();
+            } else if (reflect::TypeIsBool(members[i].type)) {
+                *(bool*)members[i].value = json_value[members[i].name].asBool();
+            } else if (reflect::TypeIsString(members[i].type)) {
+                *(std::string*)members[i].value = json_value[members[i].name].asString();
+            } else {
+                LOG_ERROR("JsonMarshal unknow type %s", members[i].type.c_str());
+            }    
+        }
+    } catch(...) {
+        LOG_ERROR("JsonUnmarshal json error, data:%s.", data.c_str());
+        return false;
+    }              
+        
     return true;
 }
 

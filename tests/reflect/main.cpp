@@ -20,7 +20,7 @@ struct Test {
 
 template<class T>
 void ReflectMember(const T& data) {
-    auto members = REFLECH_MEMBERS(T, &data);
+    auto members = REFLECT_MEMBERS(T, &data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             printf("%s %s %d\n", members[i].type.c_str(), members[i].name.c_str(), *(int*)members[i].value);
@@ -42,6 +42,10 @@ int main() {
     ReflectMember(test);
     printf("a:%d\n", test.a);
     printf("JsonMarshal:%s\n", base::JsonMarshal(test).c_str());
+
+    Test test1;
+    base::JsonUnmarshal(base::JsonMarshal(test), test1);
+    printf("a:%d, b:%s, c:%f\n", test1.a, test1.b.c_str(), test1.c);
 
     return 0;
 }
