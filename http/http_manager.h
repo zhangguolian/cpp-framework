@@ -5,27 +5,18 @@
 #include <curl/curl.h>
 #include <boost/thread/mutex.hpp>
 
-#include <http/http_buffer.h>
-
 namespace http {
-
-#define DEFAULT_BUFFER_SIZE 1024 * 1024
 
 class HttpRequest;
 
 class HttpManager {
 public:
     struct CallbackData {
-        CallbackData() : buffer_(new HttpBuffer(DEFAULT_BUFFER_SIZE)) {}
-        ~CallbackData() {
-            if (buffer_ != NULL) {
-                delete buffer_;
-                buffer_ = NULL;
-            }
-        }
+        CallbackData() {}
+        ~CallbackData() {}
 
-        HttpBuffer* buffer_;
-        std::shared_ptr<http::HttpRequest> request_;
+        std::string buffer;
+        std::shared_ptr<http::HttpRequest> request;
     };
 
     struct CURLData {

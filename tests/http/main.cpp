@@ -21,7 +21,7 @@ public:
     {
         request_.reset(new http::HttpRequest(
             http::HttpRequest::HttpMode::POST,
-            "http://150.109.59.176/exchange/api/1.0/user/symbol/info", 
+            "http://119.28.130.211/exchange/api/1.0/user/symbol/info", 
             this));
         request_->add_params("symbol", "btcusdt");
         START_HTTP_REQUEST(request_);

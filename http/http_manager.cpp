@@ -68,7 +68,7 @@ void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
 
     mutex_.lock();
     request_list_[request].reset(curl_data);
-    callback_data_list_[curl_data->curl_].request_ = request;
+    callback_data_list_[curl_data->curl_].request = request;
     curl_multi_add_handle(curl_m_, curl_data->curl_);
     mutex_.unlock();
 }
@@ -213,17 +213,17 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
     // }
 
     if (http_code == 200 || http_code == 206) {
-        iter->second.request_->set_status(HttpRequest::Status::SUCCESS);
-        iter->second.request_->set_response(std::string(iter->second.buffer_->buffer(), iter->second.buffer_->used()));
+        iter->second.request->set_status(HttpRequest::Status::SUCCESS);
+        iter->second.request->set_response(iter->second.buffer);
     } else {
-        iter->second.request_->set_status(HttpRequest::Status::FAILED);
-        iter->second.request_->set_http_code(http_code);
+        iter->second.request->set_status(HttpRequest::Status::FAILED);
+        iter->second.request->set_http_code(http_code);
     }
 
-    iter->second.request_->delegate()->OnHttpRequestComplete(iter->second.request_);
+    iter->second.request->delegate()->OnHttpRequestComplete(iter->second.request);
 
     curl_multi_remove_handle(curl_m_, msg->easy_handle);
-    request_list_.erase(iter->second.request_);
+    request_list_.erase(iter->second.request);
     callback_data_list_.erase(msg->easy_handle);
 
     mutex_.unlock();
@@ -278,7 +278,7 @@ size_t HttpManager::WriteCallback(void *buffer, size_t size, size_t count, void 
         return 0;
     }
 
-    iter->second.buffer_->Append((char*)buffer, size*count);
+    iter->second.buffer.append((char*)buffer, size*count);
 
     http_manager->mutex_.unlock();
 

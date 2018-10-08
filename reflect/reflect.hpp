@@ -30,12 +30,8 @@ public:
     }
 
 private:
-    Reflect() {
-
-    }
-    ~Reflect() {
-
-    }
+    Reflect() {}
+    ~Reflect() {}
 
 private:
     std::vector<Member> member_list_;
