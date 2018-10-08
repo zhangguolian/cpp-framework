@@ -4,7 +4,7 @@
 #include <args/args.h>
     
 int main(int argc, char* argv[]) {  
-    args::ArgsParse args_parse("Usage");
+    args::ArgsParse args_parse("Usage: args_test [options...]");
 
     std::shared_ptr<bool> help = args_parse.Get("help", "help args");
     std::unique_ptr<int> type = args_parse.Get("type", 0, "type args");
