@@ -48,8 +48,8 @@ bool Mysql::Exec(const std::string& sql) {
 
     return true;
 }
-bool Mysql::QueryRow(const std::string& sql,
-                     SQL_ROW& row) {
+bool Mysql::query_row(const std::string& sql,
+                      SQL_ROW& row) {
     bool is_success = false;
 
     if (mysql_query(mysql_, sql.c_str())) {
@@ -93,8 +93,8 @@ exit:
 
     return is_success;
 }
-bool Mysql::QueryRows(const std::string& sql,
-                      SQL_ROWS& rows) {
+bool Mysql::query_rows(const std::string& sql,
+                       SQL_ROWS& rows) {
     bool is_success = false;
 
     if (mysql_query(mysql_, sql.c_str())) {

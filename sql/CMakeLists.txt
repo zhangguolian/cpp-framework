@@ -3,7 +3,7 @@ file(GLOB headers "*.h")
 
 add_library(sql ${sources} ${headers})
 
-target_link_libraries(sql mysqlclient)
+target_link_libraries(sql base mysqlclient)
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/sql/sql.h

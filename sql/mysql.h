@@ -16,10 +16,12 @@ public:
               const std::string& db_pass,
               const std::string& db_name) override;
     bool Exec(const std::string& sql) override;
-    bool QueryRow(const std::string& sql,
-                  SQL_ROW& row) override;
-    bool QueryRows(const std::string& sql,
-                   SQL_ROWS& row) override;
+
+private:
+    bool query_row(const std::string& sql,
+                   SQL_ROW& row) override;
+    bool query_rows(const std::string& sql,
+                    SQL_ROWS& rows) override;
 
 private:
     MYSQL* mysql_;
