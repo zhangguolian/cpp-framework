@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 #include <reflect/member.hpp>
@@ -18,15 +19,21 @@ public:
         return reflect_;
     }
 
-    void add_member(const std::string& type,
+    void add_member(void* obj,
+                    void* value,
+                    const std::string& type,
                     const std::string& name) {
         Member member;
         member.type = type;
         member.name = name;
-        member_list_.push_back(member);
+        member.value = value;
+        member_list_[obj].push_back(member);
     }
-    const std::vector<Member>& member_list() {
-        return member_list_;
+    void remove_member(void* obj) {
+        member_list_.erase(obj);
+    }
+    const std::vector<Member>& member_list(void* obj) {
+        return member_list_[obj];
     }
 
 private:
@@ -34,7 +41,7 @@ private:
     ~Reflect() {}
 
 private:
-    std::vector<Member> member_list_;
+    std::map<void*, std::vector<Member>> member_list_;
     static Reflect<T>* reflect_;
 };
 
@@ -43,15 +50,12 @@ Reflect<T>* Reflect<T>::reflect_ = NULL;
 
 };
 
-#define REFLECT_REGIST(T, type, name)\
-class ReflechTmp##T##name {\
-public:\
-    ReflechTmp##T##name() {\
-        reflect::Reflect<T>::GetInstance()->add_member(#type, #name);\
-    }\
-};\
-ReflechTmp##T##name g_reflech_##T##name;
+#define REFLECT_REGIST(T, obj, type, name, value)\
+    reflect::Reflect<T>::GetInstance()->add_member((void*)obj, (void*)value, #type, #name);
+
+#define REFLECT_UNREGIST(T, obj)\
+    reflect::Reflect<T>::GetInstance()->remove_member((void*)obj);
   
-#define REFLECH_MEMBERS(T)\
-    reflect::Reflect<T>::GetInstance()->member_list();
+#define REFLECH_MEMBERS(T, obj)\
+    reflect::Reflect<T>::GetInstance()->member_list((void*)obj);
     
