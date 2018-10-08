@@ -31,10 +31,6 @@ bool decode_rsa(const std::string& data,
                 const std::string& private_key,
                 std::string& result);
 
-std::string encode_base64(const std::string& data);
-std::string decode_base64(const std::string& data);
-
-
 std::string encode_url(const std::string& data);
 std::string decode_url(const std::string& data);
 
