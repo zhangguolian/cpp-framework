@@ -1,6 +1,7 @@
 #include <reflect/reflect.hpp>
 #include <iostream>
 #include <string>
+#include <base/base.h>
 
 struct Test {
     Test() {
@@ -40,6 +41,7 @@ int main() {
     test.c = 0.1;
     ReflectMember(test);
     printf("a:%d\n", test.a);
+    printf("JsonMarshal:%s\n", base::JsonMarshal(test).c_str());
 
     return 0;
 }
