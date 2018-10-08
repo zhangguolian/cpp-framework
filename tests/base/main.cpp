@@ -3,6 +3,22 @@
 #include <base/base.h>
 #include <boost/random.hpp>
 
+struct JsonTest {
+    JsonTest() {
+        REFLECT_REGIST(JsonTest, this, int, a, &a);
+        REFLECT_REGIST(JsonTest, this, bool, b, &b);
+        REFLECT_REGIST(JsonTest, this, std::string, c, &c);
+    }
+    ~JsonTest() {
+        REFLECT_UNREGIST(JsonTest, this);
+    }
+
+    int a;
+    bool b;
+    std::string c;
+};
+
+
 int main(int argc, char** argv) {
     std::cout << base::StringPrintf("test%d, test%s", 1, "2") << std::endl;
     std::cout << "md5:" << base::md5("test") << std::endl;
@@ -11,11 +27,6 @@ int main(int argc, char** argv) {
     std::cout << "sha256:" << base::sha256("test") << std::endl;
     std::cout << "sha384:" << base::sha384("test") << std::endl;
     std::cout << "sha512:" << base::sha512("test") << std::endl;
-    
-    // std::string eaes = base::encode_aes("test", "123456");
-    // std::cout << eaes << std::endl;
-    // std::string daes = base::decode_aes(eaes, "123456");
-    // std::cout << daes << std::endl;
 
     auto output =  base::encode_aes("test333333333333333333333333333333333333", "123456");
     std::cout << base::decode_aes(output, "123456") << std::endl;
@@ -40,6 +51,25 @@ int main(int argc, char** argv) {
     std::string urlencode = base::encode_url("+8615818225465");
     std::cout << "url encode:" << urlencode << std::endl;
     std::cout << "url decode:" << base::decode_url(urlencode) << std::endl;
+
+    JsonTest json_test;
+    json_test.a = 1;
+    json_test.b = true;
+    json_test.c = "json_test";
+    std::string json_marshal = base::JsonMarshal(json_test);
+    std::cout << "JsonMarshal:" << json_marshal << std::endl;
+    json_test.a = 0;
+    json_test.b = false;
+    json_test.c = "";
+    if (!base::JsonUnmarshal(json_marshal, json_test)) {
+        std::cout << "JsonUnmarshal fail" << std::endl;
+    } else {
+        std::cout << "JsonUnmarshal:" 
+                  << json_test.a << "," 
+                  << json_test.b << ","
+                  << json_test.c << std::endl;
+    }
+
 
     return 0;
 }

@@ -68,7 +68,7 @@ bool JsonUnmarshal(const std::string& data,
             } else if (reflect::TypeIsString(members[i].type)) {
                 *(std::string*)members[i].value = json_value[members[i].name].asString();
             } else {
-                LOG_ERROR("JsonMarshal unknow type %s", members[i].type.c_str());
+                LOG_ERROR("JsonUnmarshal unknow type %s", members[i].type.c_str());
             }    
         }
     } catch(...) {
