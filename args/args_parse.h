@@ -20,11 +20,10 @@ public:
     ~ArgsParse();
 
     void Parse(int argc, char* argv[]);
-    bool IsExist(const std::string& name);
     void PrintfDescription();
 
-    void Add(const std::string& name,
-             const std::string& description);
+    std::shared_ptr<bool> Get(const std::string& name,
+                              const std::string& description);
              
     template<typename T>
     std::unique_ptr<T> Get(const std::string& name,
@@ -45,7 +44,7 @@ public:
 private:
     variables_map args_list_;
     options_description desc_;
-
+    std::map<std::string, std::shared_ptr<bool>> option_list_;
 };
 
 };

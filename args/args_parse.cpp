@@ -23,20 +23,31 @@ void ArgsParse::Parse(int argc, char* argv[]) {
     }
 
     notify(args_list_);
-}
-bool ArgsParse::IsExist(const std::string& name) {
-    return args_list_.count(name) > 0;
+
+    for (auto iter = option_list_.begin(); iter != option_list_.end(); iter++) {
+        if (args_list_.count(iter->first) > 0) {
+            *iter->second = true;
+        }
+    }
+
+    return;
 }
 void ArgsParse::PrintfDescription() {
     std::cout << desc_ << std::endl;
 }
 
-void ArgsParse::Add(const std::string& name,
-                    const std::string& description) {
+std::shared_ptr<bool> ArgsParse::Get(const std::string& name,
+                                     const std::string& description) {
     desc_.add_options()(
             name.c_str(),  
             description.c_str()
     );
+
+    std::shared_ptr<bool> result;
+    result.reset(new bool(false));
+    option_list_[name] = result;
+
+    return result;
 }
 
 }
