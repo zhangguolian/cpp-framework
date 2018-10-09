@@ -5,7 +5,7 @@
 #include <jsoncpp/json/json.h>
 #include <logs/logs.hpp>
 
-namespace json {
+namespace base {
 
 inline Json::Value JsonMarShal(void* data) {
     Json::Value json_value;

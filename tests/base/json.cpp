@@ -1,5 +1,5 @@
 #include <iostream>
-#include <json/json.hpp>
+#include <base/base.h>
 
 struct JsonData {
     JsonData() {
@@ -39,10 +39,10 @@ struct JsonTest {
 
 int main() {
     JsonTest json_test;
-    std::string json_marshal = json::JsonMarShal(json_test);
+    std::string json_marshal = base::JsonMarShal(json_test);
     std::cout << "JsonMarshal:" << json_marshal << std::endl;
     JsonTest json_test1;
-    if (!json::JsonUnmarshal(json_marshal, json_test1)) {
+    if (!base::JsonUnmarshal(json_marshal, json_test1)) {
         std::cout << "JsonUnmarshal fail" << std::endl;
     } else {
         std::cout << "JsonUnmarshal:" 
@@ -58,13 +58,13 @@ int main() {
     std::vector<JsonTest> json_test_list;
     json_test_list.push_back(json_test);
     json_test_list.push_back(json_test1);
-    std::cout << json::JsonMarShal(json_test_list) << std::endl;
+    std::cout << base::JsonMarShal(json_test_list) << std::endl;
 
     std::vector<JsonTest> json_test_list1;
-    if (!json::JsonUnmarshal(json::JsonMarShal(json_test_list), json_test_list1)) {
+    if (!base::JsonUnmarshal(base::JsonMarShal(json_test_list), json_test_list1)) {
         std::cout << "JsonUnmarshal fail" << std::endl;
     } else {
-        std::cout << json::JsonMarShal(json_test_list1) << std::endl;
+        std::cout << base::JsonMarShal(json_test_list1) << std::endl;
     }
 
     return 0;

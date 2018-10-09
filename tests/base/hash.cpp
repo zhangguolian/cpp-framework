@@ -1,18 +1,8 @@
 #include <iostream>
 #include <string>
 #include <base/base.h>
-#include <boost/random.hpp>
 
 int main(int argc, char** argv) {
-    std::cout << base::StringPrintf("test%d, test%s", 1, "2") << std::endl;
-    std::cout << base::StringToInt("1") << std::endl;
-    std::cout << base::StringToInt64("2") << std::endl;
-    std::cout << base::StringToUInt("3") << std::endl;
-    std::cout << base::StringToUInt64("4") << std::endl;
-    std::cout << base::StringToFloat("5.0") << std::endl;
-    std::cout << base::StringToDouble("6.0") << std::endl;
-    std::cout << base::StringToBool("true") << std::endl;
-
     std::cout << "md5:" << base::md5("test") << std::endl;
     std::cout << "sha1:" << base::sha1("test") << std::endl;
     std::cout << "sha224:" << base::sha224("test") << std::endl;
@@ -22,13 +12,6 @@ int main(int argc, char** argv) {
 
     auto output =  base::encode_aes("test333333333333333333333333333333333333", "123456");
     std::cout << base::decode_aes(output, "123456") << std::endl;
-
-    std::cout << base::Rand(0.0, 1.0) << std::endl;
-    std::cout << base::Rand(0.0, 1.0) << std::endl;
-    std::cout << base::Rand(0.0, 1.0) << std::endl;
-    std::cout << base::Rand(0, 100) << std::endl;
-    std::cout << base::Rand(0, 100) << std::endl;
-    std::cout << base::Rand(0, 100) << std::endl;
 
     std::string data = "0xb68788c83c2f1124578799e618c40c9467103160b68788c83c2f1124578799e618c40c9467103160";
     std::string public_key, private_key;
@@ -44,5 +27,4 @@ int main(int argc, char** argv) {
     std::cout << "url encode:" << urlencode << std::endl;
     std::cout << "url decode:" << base::decode_url(urlencode) << std::endl;
 
-    return 0;
 }
