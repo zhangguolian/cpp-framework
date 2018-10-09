@@ -1,15 +1,15 @@
-#include <reflect/reflect.hpp>
+#include <reflect/reflect.h>
 #include <iostream>
 #include <string>
 
 struct Test {
     Test() {
-        REFLECT_REGIST(Test, this, int, a, &a);
-        REFLECT_REGIST(Test, this, std::string, b, &b);
-        REFLECT_REGIST(Test, this, float, c, &c);
+        REFLECT_REGIST(this, int, a);
+        REFLECT_REGIST(this, std::string, b);
+        REFLECT_REGIST(this, float, c);
     }
     ~Test() {
-        REFLECT_UNREGIST(Test, this);
+        REFLECT_UNREGIST(this);
     }
 
     int a;
@@ -19,7 +19,7 @@ struct Test {
 
 template<class T>
 void ReflectMember(const T& data) {
-    auto members = REFLECT_MEMBERS(T, &data);
+    auto members = REFLECT_MEMBERS(&data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             printf("%s %s %d\n", members[i].type.c_str(), members[i].name.c_str(), *(int*)members[i].value);

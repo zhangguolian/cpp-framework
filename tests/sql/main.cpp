@@ -2,17 +2,17 @@
 #include <iostream>
 #include <sql/sql.h>
 #include <logs/logs.hpp>
-#include <reflect/reflect.hpp>
+#include <reflect/reflect.h>
 
 struct AdverInfo {
     AdverInfo() {
-        REFLECT_REGIST(AdverInfo, this, int64_t, id, &id);
-        REFLECT_REGIST(AdverInfo, this, std::string, adver_name, &adver_name);
-        REFLECT_REGIST(AdverInfo, this, std::string, adver_url, &adver_url);
-        REFLECT_REGIST(AdverInfo, this, int, type, &type);
+        REFLECT_REGIST(this, int64_t, id);
+        REFLECT_REGIST(this, std::string, adver_name);
+        REFLECT_REGIST(this, std::string, adver_url);
+        REFLECT_REGIST(this, int, type);
     }
     ~AdverInfo() {
-        REFLECT_UNREGIST(AdverInfo, this);
+        REFLECT_UNREGIST(this);
     }
 
     int64_t id;

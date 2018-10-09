@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <base/base.h>
-#include <reflect/reflect.hpp>
+#include <reflect/reflect.h>
 
 namespace sql {
 
@@ -30,7 +30,7 @@ public:
             return false;
         }
 
-        auto members = REFLECT_MEMBERS(T, &result);
+        auto members = REFLECT_MEMBERS(&result);
         for (size_t i = 0; i < members.size(); i++) {
             if (reflect::TypeIsInt(members[i].type)) {
                 *(int*)members[i].value = base::StringToInt(row[members[i].name]);
@@ -66,7 +66,7 @@ public:
 
         for (size_t i = 0; i < rows.size(); i++) {
             T result;
-            auto members = REFLECT_MEMBERS(T, &result);
+            auto members = REFLECT_MEMBERS(&result);
             for (size_t j = 0; j < members.size(); j++) {
                 if (reflect::TypeIsInt(members[j].type)) {
                     *(int*)members[j].value = base::StringToInt(rows[i][members[j].name]);

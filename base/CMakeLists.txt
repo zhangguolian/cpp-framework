@@ -3,7 +3,7 @@ file(GLOB headers "*.h")
 
 add_library(base ${sources} ${headers})
 
-target_link_libraries(base crypto event)
+target_link_libraries(base reflect crypto event)
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/base/base.h

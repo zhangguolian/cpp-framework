@@ -5,12 +5,12 @@
 
 struct JsonTest {
     JsonTest() {
-        REFLECT_REGIST(JsonTest, this, int, a, &a);
-        REFLECT_REGIST(JsonTest, this, bool, b, &b);
-        REFLECT_REGIST(JsonTest, this, std::string, c, &c);
+        REFLECT_REGIST(this, int, a);
+        REFLECT_REGIST(this, bool, b);
+        REFLECT_REGIST(this, std::string, c);
     }
     ~JsonTest() {
-        REFLECT_UNREGIST(JsonTest, this);
+        REFLECT_UNREGIST(this);
     }
 
     int a;

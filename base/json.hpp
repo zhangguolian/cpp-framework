@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <string>
-#include <reflect/reflect.hpp>
+#include <reflect/reflect.h>
 #include <jsoncpp/json/json.h>
 #include <logs/logs.hpp>
 
@@ -11,7 +11,7 @@ template<class T>
 std::string JsonMarshal(const T& data) {
     Json::Value json_value;
 
-    auto members = REFLECT_MEMBERS(T, &data);
+    auto members = REFLECT_MEMBERS(&data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             json_value[members[i].name] = *(int*)members[i].value;
@@ -40,7 +40,7 @@ std::string JsonMarshal(const T& data) {
 template<class T>
 bool JsonUnmarshal(const std::string& data,
                    T& result) {
-    auto members = REFLECT_MEMBERS(T, &result);
+    auto members = REFLECT_MEMBERS(&result);
 
     Json::Value json_value;
     Json::Reader json_reader; 
