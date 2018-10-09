@@ -29,9 +29,9 @@ Timer::~Timer() {
 
 }
 
-int Timer::CreateTimerTask(boost::function<void(void)> task, 
+int Timer::CreateTimerTask(const boost::function<void(void)>& task, 
                            const boost::posix_time::time_duration& expiry_time,
-                           std::shared_ptr<Thread> task_thread) {
+                           const std::shared_ptr<Thread>& task_thread) {
     mutex_.lock();
     int timer_id = timer_id_++;
     mutex_.unlock();
@@ -54,9 +54,9 @@ void Timer::CancelTimerTask(int timer_id) {
 
     return;
 }
-void Timer::CreateOnceTimerTask(boost::function<void(void)> task,
+void Timer::CreateOnceTimerTask(const boost::function<void(void)>& task,
                                 const boost::posix_time::time_duration& expiry_time,
-                                std::shared_ptr<Thread> task_thread) {
+                                const std::shared_ptr<Thread>& task_thread) {
     std::shared_ptr<boost::asio::deadline_timer> timer;
     timer.reset(new boost::asio::deadline_timer(timer_device_.io_service_, expiry_time));
     timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
@@ -64,11 +64,11 @@ void Timer::CreateOnceTimerTask(boost::function<void(void)> task,
 }
 
 void Timer::TimerCallBack(const boost::system::error_code& err, 
-                          std::shared_ptr<boost::asio::deadline_timer> timer,
+                          const std::shared_ptr<boost::asio::deadline_timer>& timer,
                           int timer_id,
-                          boost::posix_time::time_duration expiry_time,
-                          boost::function<void(void)> task,
-                          std::shared_ptr<Thread> task_thread) {
+                          const boost::posix_time::time_duration& expiry_time,
+                          const boost::function<void(void)>& task,
+                          const std::shared_ptr<Thread>& task_thread) {
     mutex_.lock();
     if (timer_id != 0 && timer_list_.find(timer_id) == timer_list_.end()) {
         mutex_.unlock();

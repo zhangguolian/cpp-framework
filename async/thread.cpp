@@ -22,7 +22,7 @@ void Thread::Join() {
     return;
 }
 
-void Thread::PostTask(boost::function<void(void)> task) {
+void Thread::PostTask(const boost::function<void(void)>& task) {
     io_service_.post(task);
 
     return;

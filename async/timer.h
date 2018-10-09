@@ -28,21 +28,21 @@ public:
     Timer();
     ~Timer();
   
-    int CreateTimerTask(boost::function<void(void)> task, 
+    int CreateTimerTask(const boost::function<void(void)>& task, 
                         const boost::posix_time::time_duration& expiry_time,
-                        std::shared_ptr<Thread> task_thread);
+                        const std::shared_ptr<Thread>& task_thread);
     void CancelTimerTask(int timer_id);
-    void CreateOnceTimerTask(boost::function<void(void)> task, 
+    void CreateOnceTimerTask(const boost::function<void(void)>& task, 
                              const boost::posix_time::time_duration& expiry_time,
-                             std::shared_ptr<Thread> task_thread);
+                             const std::shared_ptr<Thread>& task_thread);
 
 private:
     void TimerCallBack(const boost::system::error_code& err, 
-                       std::shared_ptr<boost::asio::deadline_timer> timer,
+                       const std::shared_ptr<boost::asio::deadline_timer>& timer,
                        int timer_id,
-                       boost::posix_time::time_duration expiry_time,
-                       boost::function<void(void)> task,
-                       std::shared_ptr<Thread> task_thread);
+                       const boost::posix_time::time_duration& expiry_time,
+                       const boost::function<void(void)>& task,
+                       const std::shared_ptr<Thread>& task_thread);
 
 private:
     int timer_id_;
