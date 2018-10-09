@@ -1,7 +1,7 @@
 #pragma once
 
-#include <http/http_request.h>
-#include <http/http_manager.h>
+#include <httpex/http_request.h>
+#include <httpex/http_manager.h>
 
 #define HTTP_INIT()\
     http::HttpManager::GetInstance()->Start();
