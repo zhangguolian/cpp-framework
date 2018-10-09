@@ -7,3 +7,4 @@ install(FILES
         ${PROJECT_SOURCE_DIR}/reflect/reflect.h
         ${PROJECT_SOURCE_DIR}/reflect/member.hpp
         DESTINATION /usr/local/include/reflect/)
+install(TARGETS reflect ARCHIVE DESTINATION /usr/local/lib/)

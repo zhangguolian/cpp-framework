@@ -3,22 +3,6 @@
 #include <base/base.h>
 #include <boost/random.hpp>
 
-struct JsonTest {
-    JsonTest() {
-        REFLECT_REGIST(this, int, a);
-        REFLECT_REGIST(this, bool, b);
-        REFLECT_REGIST(this, std::string, c);
-    }
-    ~JsonTest() {
-        REFLECT_UNREGIST(this);
-    }
-
-    int a;
-    bool b;
-    std::string c;
-};
-
-
 int main(int argc, char** argv) {
     std::cout << base::StringPrintf("test%d, test%s", 1, "2") << std::endl;
     std::cout << base::StringToInt("1") << std::endl;
@@ -59,25 +43,6 @@ int main(int argc, char** argv) {
     std::string urlencode = base::encode_url("+8615818225465");
     std::cout << "url encode:" << urlencode << std::endl;
     std::cout << "url decode:" << base::decode_url(urlencode) << std::endl;
-
-    JsonTest json_test;
-    json_test.a = 1;
-    json_test.b = true;
-    json_test.c = "json_test";
-    std::string json_marshal = base::JsonMarshal(json_test);
-    std::cout << "JsonMarshal:" << json_marshal << std::endl;
-    json_test.a = 0;
-    json_test.b = false;
-    json_test.c = "";
-    if (!base::JsonUnmarshal(json_marshal, json_test)) {
-        std::cout << "JsonUnmarshal fail" << std::endl;
-    } else {
-        std::cout << "JsonUnmarshal:" 
-                  << json_test.a << "," 
-                  << json_test.b << ","
-                  << json_test.c << std::endl;
-    }
-
 
     return 0;
 }

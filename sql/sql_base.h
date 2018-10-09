@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <base/base.h>
+#include <logs/logs.hpp>
 #include <reflect/reflect.h>
 
 namespace sql {

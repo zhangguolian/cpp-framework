@@ -5,13 +5,12 @@
 #include <jsoncpp/json/json.h>
 #include <logs/logs.hpp>
 
-namespace base {
+namespace json {
 
-template<class T>
-std::string JsonMarshal(const T& data) {
+Json::Value json_marshal(void* data) {
     Json::Value json_value;
 
-    auto members = REFLECT_MEMBERS(&data);
+    auto members = REFLECT_MEMBERS(data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             json_value[members[i].name] = *(int*)members[i].value;
@@ -30,26 +29,18 @@ std::string JsonMarshal(const T& data) {
         } else if (reflect::TypeIsString(members[i].type)) {
             json_value[members[i].name] = *(std::string*)members[i].value;
         } else {
-            LOG_ERROR("JsonMarshal unknow type %s", members[i].type.c_str());
+            json_value[members[i].name] = json_marshal(members[i].value);
         }    
     }
 
-    return json_value.toStyledString();
+    return json_value;
 }
 
-template<class T>
-bool JsonUnmarshal(const std::string& data,
-                   T& result) {
-    auto members = REFLECT_MEMBERS(&result);
+void json_unmarshal(const Json::Value& json_value,
+                    void* result) {
+    auto members = REFLECT_MEMBERS(result);
 
-    Json::Value json_value;
-    Json::Reader json_reader; 
     try {
-        if (!json_reader.parse(data, json_value)) {
-            LOG_ERROR("JsonUnmarshal json_reader.parse fail.");
-            return false;  
-        }
-
         for (size_t i = 0; i < members.size(); i++) {
             if (reflect::TypeIsInt(members[i].type)) {
                 *(int*)members[i].value = json_value[members[i].name].asInt();
@@ -68,9 +59,34 @@ bool JsonUnmarshal(const std::string& data,
             } else if (reflect::TypeIsString(members[i].type)) {
                 *(std::string*)members[i].value = json_value[members[i].name].asString();
             } else {
-                LOG_ERROR("JsonUnmarshal unknow type %s", members[i].type.c_str());
+                json_unmarshal(json_value[members[i].name], members[i].value);
             }    
         }
+    } catch(...) {
+        LOG_ERROR("JsonUnmarshal json error.");
+        return;
+    }              
+        
+    return;
+}
+
+template<class T>
+std::string JsonMarShal(const T& data) {
+    return json::json_marshal((void*)&data).toStyledString();
+}
+
+template<class T>
+bool JsonUnmarshal(const std::string& data,
+                   const T& result) {
+    Json::Value json_value;
+    Json::Reader json_reader; 
+    try {
+        if (!json_reader.parse(data, json_value)) {
+            LOG_ERROR("JsonUnmarshal json_reader.parse fail.");
+            return false;  
+        }
+
+        json_unmarshal(json_value, (void*)&result);
     } catch(...) {
         LOG_ERROR("JsonUnmarshal json error, data:%s.", data.c_str());
         return false;
