@@ -5,7 +5,6 @@
 
 namespace base {
 
-std::string Map2UrlQuery(const std::map<std::string, std::string> params);
 std::string StringPrintf(const char* format,  ...);
 int StringToInt(const std::string& data);
 int64_t StringToInt64(const std::string& data);

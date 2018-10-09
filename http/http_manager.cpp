@@ -10,6 +10,19 @@ namespace http {
 
 HttpManager* HttpManager::http_manager_ = NULL;
 
+std::string MapToUrlQuery(const std::map<std::string, std::string>& params) {
+    std::string result = "";
+    for (auto iter = params.begin(); iter != params.end(); iter++) {
+        if (result == "") {
+            result += iter->first + "=" + iter->second;
+        } else {
+            result += "&" + iter->first + "=" + iter->second;
+        }
+    }
+
+    return result;
+}
+
 HttpManager::HttpManager()
             : is_running_(false)
             , curl_m_(NULL) {
@@ -98,11 +111,11 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
     std::string url = request->url();
     if (!request->params().empty()) {
         if (request->http_mode() == HttpRequest::HttpMode::GET) {
-            url += "?" + base::Map2UrlQuery(request->params());
+            url += "?" + MapToUrlQuery(request->params());
         } else {
             curl_data->headers_ = curl_slist_append(curl_data->headers_, "Content-Type: application/x-www-form-urlencoded");
             curl_data->headers_ = curl_slist_append(curl_data->headers_, "Accept-Language: zh-cn");
-            curl_data->post_data_ = base::Map2UrlQuery(request->params());
+            curl_data->post_data_ = MapToUrlQuery(request->params());
             curl_easy_setopt(curl_data->curl_, CURLOPT_HTTPHEADER, curl_data->headers_);
             curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDSIZE, curl_data->post_data_.size());
             curl_easy_setopt(curl_data->curl_, CURLOPT_POSTFIELDS, curl_data->post_data_.c_str());
