@@ -54,5 +54,18 @@ int main() {
                   << std::endl;
     }
 
+    json_test1.a += 1;
+    std::vector<JsonTest> json_test_list;
+    json_test_list.push_back(json_test);
+    json_test_list.push_back(json_test1);
+    std::cout << json::JsonMarShal(json_test_list) << std::endl;
+
+    std::vector<JsonTest> json_test_list1;
+    if (!json::JsonUnmarshal(json::JsonMarShal(json_test_list), json_test_list1)) {
+        std::cout << "JsonUnmarshal fail" << std::endl;
+    } else {
+        std::cout << json::JsonMarShal(json_test_list1) << std::endl;
+    }
+
     return 0;
 }

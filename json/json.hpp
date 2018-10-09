@@ -35,6 +35,22 @@ Json::Value JsonMarShal(void* data) {
 
     return json_value;
 }
+template<class T>
+std::string JsonMarShal(const T& data) {
+    T data1;
+    data1 = data;
+    return JsonMarShal((void*)&data1).toStyledString();
+}
+template<class T>
+std::string JsonMarShal(const std::vector<T>& data_list) {
+    T data;
+    Json::Value json_value;
+    for (size_t i = 0; i < data_list.size(); i++) {
+        data = data_list[i];
+        json_value.append(JsonMarShal((void*)&data));
+    }
+    return json_value.toStyledString();
+}
 
 void JsonUnmarshal(const Json::Value& json_value,
                    void* result) {
@@ -69,15 +85,9 @@ void JsonUnmarshal(const Json::Value& json_value,
         
     return;
 }
-
-template<class T>
-std::string JsonMarShal(const T& data) {
-    return JsonMarShal((void*)&data).toStyledString();
-}
-
 template<class T>
 bool JsonUnmarshal(const std::string& data,
-                   const T& result) {
+                   T& result) {
     Json::Value json_value;
     Json::Reader json_reader; 
     try {
@@ -87,6 +97,33 @@ bool JsonUnmarshal(const std::string& data,
         }
 
         JsonUnmarshal(json_value, (void*)&result);
+    } catch(...) {
+        LOG_ERROR("JsonUnmarshal json error, data:%s.", data.c_str());
+        return false;
+    }              
+        
+    return true;
+}
+template<class T>
+bool JsonUnmarshal(const std::string& data,
+                   std::vector<T>& results) {
+    Json::Value json_value;
+    Json::Reader json_reader; 
+    try {
+        if (!json_reader.parse(data, json_value)) {
+            LOG_ERROR("JsonUnmarshal json_reader.parse fail.");
+            return false;  
+        }
+
+        if (!json_value.isArray()) {
+            return false;
+        }
+
+        for (int i = 0; i < int(json_value.size()); i++) {
+            T result;
+            JsonUnmarshal(json_value[i], (void*)&result);
+            results.push_back(result);
+        }
     } catch(...) {
         LOG_ERROR("JsonUnmarshal json error, data:%s.", data.c_str());
         return false;
