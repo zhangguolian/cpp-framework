@@ -86,6 +86,20 @@ void JsonUnmarshal(const Json::Value& json_value,
     return;
 }
 template<class T>
+void JsonUnmarshal(const Json::Value& json_value,
+                   T& result) {
+    JsonUnmarshal(json_value, (void*)&result);
+}
+template<class T>
+void JsonUnmarshal(const Json::Value& json_value,
+                   std::vector<T>& results) {
+    for (int i = 0; i < int(json_value.size()); i++) {
+        T result;
+        JsonUnmarshal(json_value[i], (void*)&result);
+        results.push_back(result);
+    }
+}
+template<class T>
 bool JsonUnmarshal(const std::string& data,
                    T& result) {
     Json::Value json_value;
