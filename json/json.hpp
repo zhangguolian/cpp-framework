@@ -7,7 +7,7 @@
 
 namespace json {
 
-Json::Value json_marshal(void* data) {
+Json::Value JsonMarShal(void* data) {
     Json::Value json_value;
 
     auto members = REFLECT_MEMBERS(data);
@@ -29,15 +29,15 @@ Json::Value json_marshal(void* data) {
         } else if (reflect::TypeIsString(members[i].type)) {
             json_value[members[i].name] = *(std::string*)members[i].value;
         } else {
-            json_value[members[i].name] = json_marshal(members[i].value);
+            json_value[members[i].name] = JsonMarShal(members[i].value);
         }    
     }
 
     return json_value;
 }
 
-void json_unmarshal(const Json::Value& json_value,
-                    void* result) {
+void JsonUnmarshal(const Json::Value& json_value,
+                   void* result) {
     auto members = REFLECT_MEMBERS(result);
 
     try {
@@ -59,7 +59,7 @@ void json_unmarshal(const Json::Value& json_value,
             } else if (reflect::TypeIsString(members[i].type)) {
                 *(std::string*)members[i].value = json_value[members[i].name].asString();
             } else {
-                json_unmarshal(json_value[members[i].name], members[i].value);
+                JsonUnmarshal(json_value[members[i].name], members[i].value);
             }    
         }
     } catch(...) {
@@ -72,7 +72,7 @@ void json_unmarshal(const Json::Value& json_value,
 
 template<class T>
 std::string JsonMarShal(const T& data) {
-    return json::json_marshal((void*)&data).toStyledString();
+    return JsonMarShal((void*)&data).toStyledString();
 }
 
 template<class T>
@@ -86,7 +86,7 @@ bool JsonUnmarshal(const std::string& data,
             return false;  
         }
 
-        json_unmarshal(json_value, (void*)&result);
+        JsonUnmarshal(json_value, (void*)&result);
     } catch(...) {
         LOG_ERROR("JsonUnmarshal json error, data:%s.", data.c_str());
         return false;
