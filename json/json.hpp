@@ -7,7 +7,7 @@
 
 namespace json {
 
-Json::Value JsonMarShal(void* data) {
+inline Json::Value JsonMarShal(void* data) {
     Json::Value json_value;
 
     auto members = REFLECT_MEMBERS(data);
@@ -52,8 +52,8 @@ std::string JsonMarShal(const std::vector<T>& data_list) {
     return json_value.toStyledString();
 }
 
-void JsonUnmarshal(const Json::Value& json_value,
-                   void* result) {
+inline void JsonUnmarshal(const Json::Value& json_value,
+                          void* result) {
     auto members = REFLECT_MEMBERS(result);
 
     try {
