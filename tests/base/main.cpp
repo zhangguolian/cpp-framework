@@ -21,6 +21,14 @@ struct JsonTest {
 
 int main(int argc, char** argv) {
     std::cout << base::StringPrintf("test%d, test%s", 1, "2") << std::endl;
+    std::cout << base::StringToInt("1") << std::endl;
+    std::cout << base::StringToInt64("2") << std::endl;
+    std::cout << base::StringToUInt("3") << std::endl;
+    std::cout << base::StringToUInt64("4") << std::endl;
+    std::cout << base::StringToFloat("5.0") << std::endl;
+    std::cout << base::StringToDouble("6.0") << std::endl;
+    std::cout << base::StringToBool("true") << std::endl;
+
     std::cout << "md5:" << base::md5("test") << std::endl;
     std::cout << "sha1:" << base::sha1("test") << std::endl;
     std::cout << "sha224:" << base::sha224("test") << std::endl;

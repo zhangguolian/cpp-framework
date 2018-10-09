@@ -37,15 +37,15 @@ public:
             } else if (reflect::TypeIsInt64(members[i].type)) {
                 *(int64_t*)members[i].value = base::StringToInt64(row[members[i].name]);
             } else if (reflect::TypeIsUInt(members[i].type)) {
-                *(uint*)members[i].value = (uint)base::StringToInt(row[members[i].name]);
+                *(uint*)members[i].value = base::StringToUInt(row[members[i].name]);
             } else if (reflect::TypeIsUInt64(members[i].type)) {
-                *(uint64_t*)members[i].value = base::StringToInt64(row[members[i].name]);
-            // } else if (reflect::TypeIsFloat(members[i].type)) {
-            //     json_value[members[i].name] = *(float*)members[i].value;
-            // } else if (reflect::TypeIsDouble(members[i].type)) {
-            //     json_value[members[i].name] = *(double*)members[i].value;
-            // } else if (reflect::TypeIsBool(members[i].type)) {
-            //     json_value[members[i].name] = *(bool*)members[i].value;
+                *(uint64_t*)members[i].value = base::StringToUInt64(row[members[i].name]);
+            } else if (reflect::TypeIsFloat(members[i].type)) {
+                *(float*)members[i].value = base::StringToFloat(row[members[i].name]);
+            } else if (reflect::TypeIsDouble(members[i].type)) {
+                *(double*)members[i].value = base::StringToDouble(row[members[i].name]);
+            } else if (reflect::TypeIsBool(members[i].type)) {
+                *(bool*)members[i].value = base::StringToBool(row[members[i].name]);
             } else if (reflect::TypeIsString(members[i].type)) {
                  *(std::string*)members[i].value = row[members[i].name];
             } else {
@@ -73,15 +73,15 @@ public:
                 } else if (reflect::TypeIsInt64(members[j].type)) {
                     *(int64_t*)members[j].value = base::StringToInt64(rows[i][members[j].name]);
                 } else if (reflect::TypeIsUInt(members[j].type)) {
-                    *(uint*)members[j].value = (uint)base::StringToInt(rows[i][members[j].name]);
+                    *(uint*)members[j].value = base::StringToUInt(rows[i][members[j].name]);
                 } else if (reflect::TypeIsUInt64(members[j].type)) {
-                    *(uint64_t*)members[j].value = base::StringToInt64(rows[i][members[j].name]);
-                // } else if (reflect::TypeIsFloat(members[i].type)) {
-                //     json_value[members[i].name] = *(float*)members[i].value;
-                // } else if (reflect::TypeIsDouble(members[i].type)) {
-                //     json_value[members[i].name] = *(double*)members[i].value;
-                // } else if (reflect::TypeIsBool(members[i].type)) {
-                //     json_value[members[i].name] = *(bool*)members[i].value;
+                    *(uint64_t*)members[j].value = base::StringToUInt64(rows[i][members[j].name]);
+                } else if (reflect::TypeIsFloat(members[i].type)) {
+                    *(float*)members[j].value = base::StringToFloat(rows[i][members[j].name]);
+                } else if (reflect::TypeIsDouble(members[i].type)) {
+                    *(double*)members[j].value = base::StringToDouble(rows[i][members[j].name]);
+                } else if (reflect::TypeIsBool(members[i].type)) {
+                    *(bool*)members[j].value = base::StringToBool(rows[i][members[j].name]);;
                 } else if (reflect::TypeIsString(members[j].type)) {
                     *(std::string*)members[j].value = rows[i][members[j].name];
                 } else {
