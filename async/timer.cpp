@@ -30,16 +30,16 @@ Timer::~Timer() {
 }
 
 int Timer::CreateTimerTask(boost::function<void(void)> task, 
-                           int delay_seconds,
+                           const boost::posix_time::time_duration& expiry_time,
                            std::shared_ptr<Thread> task_thread) {
     mutex_.lock();
     int timer_id = timer_id_++;
     mutex_.unlock();
 
     std::shared_ptr<boost::asio::deadline_timer> timer;
-    timer.reset(new boost::asio::deadline_timer(timer_device_.io_service_, boost::posix_time::seconds(delay_seconds)));
+    timer.reset(new boost::asio::deadline_timer(timer_device_.io_service_, expiry_time));
     timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
-        timer_id, delay_seconds, task, task_thread));
+        timer_id, expiry_time, task, task_thread));
 
     mutex_.lock();
     timer_list_[timer_id] = timer;
@@ -54,19 +54,19 @@ void Timer::CancelTimerTask(int timer_id) {
 
     return;
 }
-void Timer::CreateOnceTimerTask(boost::function<void(void)> task, 
-                                int delay_seconds,
+void Timer::CreateOnceTimerTask(boost::function<void(void)> task,
+                                const boost::posix_time::time_duration& expiry_time,
                                 std::shared_ptr<Thread> task_thread) {
     std::shared_ptr<boost::asio::deadline_timer> timer;
-    timer.reset(new boost::asio::deadline_timer(timer_device_.io_service_, boost::posix_time::seconds(delay_seconds)));
+    timer.reset(new boost::asio::deadline_timer(timer_device_.io_service_, expiry_time));
     timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
-        0, delay_seconds, task, task_thread));
+        0, expiry_time, task, task_thread));
 }
 
 void Timer::TimerCallBack(const boost::system::error_code& err, 
                           std::shared_ptr<boost::asio::deadline_timer> timer,
                           int timer_id,
-                          int delay_seconds,
+                          boost::posix_time::time_duration expiry_time,
                           boost::function<void(void)> task,
                           std::shared_ptr<Thread> task_thread) {
     mutex_.lock();
@@ -79,9 +79,9 @@ void Timer::TimerCallBack(const boost::system::error_code& err,
     task_thread->PostTask(task);
 
     if (timer_id != 0) {
-        timer->expires_at(timer->expires_at() + boost::posix_time::seconds(delay_seconds)) ;
+        timer->expires_at(timer->expires_at() + expiry_time) ;
         timer->async_wait(boost::bind(&Timer::TimerCallBack, this, _1, timer, 
-            timer_id, delay_seconds, task, task_thread));
+            timer_id, expiry_time, task, task_thread));
     }
 
     return;

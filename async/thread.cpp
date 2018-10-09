@@ -28,6 +28,10 @@ void Thread::PostTask(boost::function<void(void)> task) {
     return;
 }
 
+boost::asio::io_service& Thread::io_service() {
+    return io_service_;
+}
+
 void Thread::TaskThread() {
     boost::asio::io_service::work work(io_service_);
     io_service_.run();

@@ -18,9 +18,9 @@ int main() {
     async::Timer timer; 
     async::Timer timer1; 
 
-    timer.CreateTimerTask(boost::bind(print, 1, 2), 2, main_thread);
-    timer.CreateOnceTimerTask(boost::bind(print_once, 1, 2), 2, main_thread);
-    timer1.CreateTimerTask(boost::bind(print1, 1, 2), 2, main_thread);
+    timer.CreateTimerTask(boost::bind(print, 1, 2), boost::posix_time::seconds(2), main_thread);
+    timer.CreateOnceTimerTask(boost::bind(print_once, 1, 2), boost::posix_time::millisec(2), main_thread);
+    timer1.CreateTimerTask(boost::bind(print1, 1, 2), boost::posix_time::seconds(6), main_thread);
 
     main_thread->Join();
     

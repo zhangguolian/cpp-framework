@@ -17,6 +17,8 @@ public:
     void Join();
     void PostTask(boost::function<void(void)> task);
 
+    boost::asio::io_service& io_service();
+
 private:
     void TaskThread();
 
