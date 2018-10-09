@@ -9,20 +9,17 @@ namespace http {
 
 class HttpRequest {
 public:
-    class Delegate
-    {
+    class Delegate {
     public:
         virtual void OnHttpRequestComplete(std::shared_ptr<HttpRequest> request) = 0;
     };
 
-    enum HttpMode
-    {
+    enum HttpMode {
         GET = 0,
         POST,
     };
 
-    enum Status
-    {
+    enum Status {
         INIT = 0,
         IO_PENDING,
         SUCCESS,
