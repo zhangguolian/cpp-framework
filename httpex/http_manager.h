@@ -50,6 +50,7 @@ public:
     void Cancel();
 
     void AddHttpRequest(std::shared_ptr<HttpRequest> request);
+    void AddHttpRequestOnThread(std::shared_ptr<HttpRequest> request);
     void CancelHttpRequest(std::shared_ptr<HttpRequest> request);
 
 private:
@@ -75,7 +76,6 @@ private:
     bool is_running_;
     int still_running_;
     CURLM* curl_m_;
-    boost::mutex mutex_;
     async::Timer timer_; 
     std::shared_ptr<async::Thread> thread_;
     REQUEST_LIST request_list_;

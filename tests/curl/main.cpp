@@ -483,12 +483,12 @@ int main(int argc, char **argv)
   while (true) {
       if (is_init) {
           main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
-          sleep(1);
+          // main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
+          // main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
+          // main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
+          // main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
+          // main_thread->PostTask(boost::bind(&new_conn, (char *)"www.baidu.com", &g));
+          usleep(100000);
       }
   }
 

@@ -65,7 +65,6 @@ void HttpManager::Cancel() {
         return;  
     }
 
-    mutex_.lock();
     for (auto iter = callback_data_list_.begin(); iter != callback_data_list_.end(); iter++) {
         curl_multi_remove_handle(curl_m_, iter->first);
         curl_easy_cleanup(iter->first);
@@ -74,31 +73,25 @@ void HttpManager::Cancel() {
     curl_m_ = NULL;
     request_list_.clear();
     callback_data_list_.clear();
-    mutex_.unlock();
 }
 
 void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
-    mutex_.lock();
+    thread_->PostTask(boost::bind(&HttpManager::AddHttpRequestOnThread, this, request));
+}
+void HttpManager::AddHttpRequestOnThread(std::shared_ptr<HttpRequest> request) {
     if (request == NULL || request_list_.find(request) != request_list_.end()) {
-        mutex_.unlock();
         return;
     }
-    mutex_.unlock();
 
     CURLData* curl_data = CreateCURLData(request);
 
-    mutex_.lock();
     request_list_[request].reset(curl_data);
     callback_data_list_[curl_data->curl_].request = request;
     curl_multi_add_handle(curl_m_, curl_data->curl_);
-    mutex_.unlock();
 }
 void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
-    mutex_.lock();
-
     auto iter = request_list_.find(request);
     if (iter == request_list_.end()) {
-        mutex_.lock();
         return;
     }
 
@@ -106,8 +99,6 @@ void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
     curl_easy_cleanup(iter->second->curl_);
     callback_data_list_.erase(iter->second->curl_);
     request_list_.erase(request);
-
-    mutex_.unlock();
 
     return;
 }
@@ -156,16 +147,12 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
 }
 
 void HttpManager::HttpRequestComplete(CURLMsg* msg) {
-    mutex_.lock();
-
     if (!msg || !msg->easy_handle) {
-        mutex_.unlock();
         return;
     }
 
     auto iter = callback_data_list_.find(msg->easy_handle);
     if (iter == callback_data_list_.end()) {
-        mutex_.unlock();
         return;
     }
 
@@ -191,8 +178,6 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
     curl_multi_remove_handle(curl_m_, msg->easy_handle);
     request_list_.erase(iter->second.request);
     callback_data_list_.erase(msg->easy_handle);
-
-    mutex_.unlock();
 
     return;
 }
@@ -240,13 +225,10 @@ void HttpManager::addsock(curl_socket_t sock, CURL* easy, int action) {
     curl_multi_assign(http_manager_->curl_m_, sock, fdp);
 }
 void HttpManager::setsock(int *fdp, curl_socket_t sock, CURL* easy, int act, int oldact) {
-    http_manager_->mutex_.lock();
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter == http_manager_->socket_list_.end()) {
-        http_manager_->mutex_.unlock();
         return;
     }
-    http_manager_->mutex_.unlock();
 
     boost::asio::ip::tcp::socket* tcp_socket = iter->second;
     *fdp = act;
@@ -282,15 +264,10 @@ void HttpManager::remsock(int* fd) {
     }
 }
 void HttpManager::event_cb(curl_socket_t sock, int action, const boost::system::error_code& error, int *fdp) {
-    http_manager_->mutex_.lock();
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter == http_manager_->socket_list_.end()) {
-        http_manager_->mutex_.unlock();
         return;
     }
-
-    boost::asio::ip::tcp::socket* tcp_socket = iter->second;
-    http_manager_->mutex_.unlock();
 
     /* make sure the event matches what are wanted */
     if(*fdp == action || *fdp == CURL_POLL_INOUT) {
@@ -306,6 +283,7 @@ void HttpManager::event_cb(curl_socket_t sock, int action, const boost::system::
             * the socket may have been closed and/or fdp may have been changed
             * in curl_multi_socket_action(), so check them both */
         if(!error && (*fdp == action || *fdp == CURL_POLL_INOUT)) {
+            boost::asio::ip::tcp::socket* tcp_socket = iter->second;
             if(action == CURL_POLL_IN) {
                 tcp_socket->async_read_some(boost::asio::null_buffers(),
                                             boost::bind(&event_cb, sock,
@@ -337,22 +315,18 @@ curl_socket_t HttpManager::opensocket(void* clientp, curlsocktype purpose, struc
             sockfd = tcp_socket->native_handle();
 
             /* save it for monitoring */
-            http_manager_->mutex_.lock();
             http_manager_->socket_list_[sockfd] = tcp_socket;
-            http_manager_->mutex_.unlock();
         }
     }
 
     return sockfd;
 }
 int HttpManager::close_socket(void* clientp, curl_socket_t sock) {
-    http_manager_->mutex_.lock();
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter != http_manager_->socket_list_.end()) {
         delete iter->second;
         http_manager_->socket_list_.erase(iter);
     }
-    http_manager_->mutex_.unlock();
 
     return 0;
 }
@@ -360,17 +334,12 @@ int HttpManager::close_socket(void* clientp, curl_socket_t sock) {
 size_t HttpManager::write_cb(void *buffer, size_t size, size_t count, void * stream) {
     CURL* curl = static_cast<CURL*>(stream);
 
-    http_manager_->mutex_.lock();
-
     auto iter = http_manager_->callback_data_list_.find(curl);
     if (iter == http_manager_->callback_data_list_.end()) {
-        http_manager_->mutex_.unlock();
         return 0;
     }
 
     iter->second.buffer.append((char*)buffer, size*count);
-
-    http_manager_->mutex_.unlock();
 
     return size * count;
 }

@@ -1,45 +1,55 @@
-#include <http/http.h>
+#include <httpex/http.h>
 #include <jsoncpp/json/json.h>
+#include <errors/errors.h>
+#include <logs/logs.hpp>
 
-class HttpTest : public http::HttpRequest::Delegate {
+class HttpTest : public httpex::HttpRequest::Delegate {
 public:
-    void OnHttpRequestComplete(std::shared_ptr<http::HttpRequest> request) override
+    void OnHttpRequestComplete(std::shared_ptr<httpex::HttpRequest> request) override
     {
         std::cout << "OnRequestComplete" << std::endl;
         std::cout << "res:" << request->response() << std::endl;
 
-        Json::Value json_value;
-        Json::Reader json_reader;
-        json_reader.parse(request->response(), json_value);
-        Json::Value symbol_value = json_value["symbol_info"];
-        std::cout << json_value["test"].asString() << std::endl;
-        std::cout << symbol_value["symbol"].asString() << std::endl;
-        std::cout << symbol_value << std::endl;
+        // Json::Value json_value;
+        // Json::Reader json_reader;
+        // json_reader.parse(request->response(), json_value);
+        // Json::Value symbol_value = json_value["symbol_info"];
+        // std::cout << json_value["test"].asString() << std::endl;
+        // std::cout << symbol_value["symbol"].asString() << std::endl;
+        // std::cout << symbol_value << std::endl;
     }
 
     void Start()
     {
-        request_.reset(new http::HttpRequest(
-            http::HttpRequest::HttpMode::POST,
-            "http://119.28.130.211/exchange/api/1.0/user/symbol/info", 
+        LOG_INFO("request start");
+        request_.reset(new httpex::HttpRequest(
+            httpex::HttpRequest::HttpMode::POST,
+            "http://www.baidu.com", 
             this));
         request_->add_params("symbol", "btcusdt");
         START_HTTP_REQUEST(request_);
     }
 
-    std::shared_ptr<http::HttpRequest> request_;
+    std::shared_ptr<httpex::HttpRequest> request_;
 };
 
 int main() {
+    INIT_ERRORS_SIGNAL();
     HTTP_INIT();
 
     HttpTest http_test;
     http_test.Start();
 
+    std::vector<HttpTest> http_test_list;
+    for (size_t i = 0; i < 10000; i++) {
+        http_test_list.push_back(http_test);
+    }
+
     while (true) {
-        // HttpTest* http_test = new HttpTest();
-        // http_test->Start();
-        sleep(1);
+        for (size_t i = 0; i < http_test_list.size(); i++) {
+            http_test_list[i].Start();
+            usleep(100000);
+        }       
     }
 
     return 0;
