@@ -46,6 +46,12 @@ void HttpManager::Start() {
         return;
     }
 
+    if (thread_.get() == NULL) {
+        thread_.reset(new async::Thread());
+        thread_->PostTask(boost::bind(&HttpManager::Start, this));
+        return;
+    }
+
     is_running_ = true;
     curl_global_init(CURL_GLOBAL_ALL);
     curl_m_ = curl_multi_init();
@@ -53,8 +59,6 @@ void HttpManager::Start() {
     curl_multi_setopt(curl_m_, CURLMOPT_SOCKETDATA, curl_m_);
     curl_multi_setopt(curl_m_, CURLMOPT_TIMERFUNCTION, multi_timer_cb);
     curl_multi_setopt(curl_m_, CURLMOPT_TIMERDATA, curl_m_);
-
-    thread_.reset(new async::Thread());
 }
 void HttpManager::Cancel() {
     if (!is_running_) {
@@ -137,15 +141,14 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
     }  
 
     curl_easy_setopt(curl_data->curl_, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl_data->curl_, CURLOPT_TIMEOUT, 10);
-    curl_easy_setopt(curl_data->curl_, CURLOPT_NOSIGNAL, 1);
-    curl_easy_setopt(curl_data->curl_, CURLOPT_MAXREDIRS, 5);
-    curl_easy_setopt(curl_data->curl_, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl_data->curl_, CURLOPT_WRITEFUNCTION, HttpManager::WriteCallback);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_TIMEOUT, 10L);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_NOSIGNAL, 1L);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_MAXREDIRS, 5L);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl_data->curl_, CURLOPT_WRITEFUNCTION, write_cb);
     curl_easy_setopt(curl_data->curl_, CURLOPT_WRITEDATA, curl_data->curl_);
-      /* call this function to get a socket */
+    /* call this function to get a socket */
     curl_easy_setopt(curl_data->curl_, CURLOPT_OPENSOCKETFUNCTION, opensocket);
-
     /* call this function to close a socket */
     curl_easy_setopt(curl_data->curl_, CURLOPT_CLOSESOCKETFUNCTION, close_socket);
 
@@ -197,7 +200,9 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
 int HttpManager::multi_timer_cb(CURLM *multi, long timeout_ms) {
     if(timeout_ms > 0) {
         /* update timer */
-        HttpManager::GetInstance()->timer_.CreateOnceTimerTask(boost::bind(&timer_cb), boost::posix_time::millisec(timeout_ms), HttpManager::GetInstance()->thread_);
+        http_manager_->timer_.CreateOnceTimerTask(boost::bind(&timer_cb), 
+            boost::posix_time::millisec(timeout_ms), 
+            http_manager_->thread_);
     } else if(timeout_ms == 0) {
         /* call timeout function immediately */
         timer_cb();
@@ -206,13 +211,12 @@ int HttpManager::multi_timer_cb(CURLM *multi, long timeout_ms) {
     return 0;
 }
 void HttpManager::timer_cb() {
-    CURLMcode rc;
-    rc = curl_multi_socket_action(HttpManager::GetInstance()->curl_m_, CURL_SOCKET_TIMEOUT, 0,
-                                  &HttpManager::GetInstance()->still_running_);
+    curl_multi_socket_action(http_manager_->curl_m_, CURL_SOCKET_TIMEOUT, 0,
+                             &http_manager_->still_running_);
 
     check_multi_info();
 }
-int HttpManager::sock_cb(CURL *curl, curl_socket_t sock, int what, void *cbp, void *sockp) {
+int HttpManager::sock_cb(CURL* curl, curl_socket_t sock, int what, void* cbp, void* sockp) {
     int* actionp = (int*)sockp;
 
     if(what == CURL_POLL_REMOVE) {
@@ -228,18 +232,21 @@ int HttpManager::sock_cb(CURL *curl, curl_socket_t sock, int what, void *cbp, vo
     return 0;
 }
 
-void HttpManager::addsock(curl_socket_t s, CURL* easy, int action) {
+void HttpManager::addsock(curl_socket_t sock, CURL* easy, int action) {
     /* fdp is used to store current action */
-    int* fdp = (int *) calloc(sizeof(int), 1);
+    int* fdp = (int *)calloc(sizeof(int), 1);
 
-    setsock(fdp, s, easy, action, 0);
-    curl_multi_assign(HttpManager::GetInstance()->curl_m_, s, fdp);
+    setsock(fdp, sock, easy, action, 0);
+    curl_multi_assign(http_manager_->curl_m_, sock, fdp);
 }
-void HttpManager::setsock(int *fdp, curl_socket_t s, CURL *e, int act, int oldact) {
-    auto iter = HttpManager::GetInstance()->socket_list_.find(s);
-    if(iter == HttpManager::GetInstance()->socket_list_.end()) {
+void HttpManager::setsock(int *fdp, curl_socket_t sock, CURL* easy, int act, int oldact) {
+    http_manager_->mutex_.lock();
+    auto iter = http_manager_->socket_list_.find(sock);
+    if(iter == http_manager_->socket_list_.end()) {
+        http_manager_->mutex_.unlock();
         return;
     }
+    http_manager_->mutex_.unlock();
 
     boost::asio::ip::tcp::socket* tcp_socket = iter->second;
     *fdp = act;
@@ -247,136 +254,133 @@ void HttpManager::setsock(int *fdp, curl_socket_t s, CURL *e, int act, int oldac
     if(act == CURL_POLL_IN) {
         if(oldact != CURL_POLL_IN && oldact != CURL_POLL_INOUT) {
             tcp_socket->async_read_some(boost::asio::null_buffers(),
-                                        boost::bind(&event_cb, s,
+                                        boost::bind(&event_cb, sock,
                                                     CURL_POLL_IN, _1, fdp));
         }
     } else if(act == CURL_POLL_OUT) {
         if(oldact != CURL_POLL_OUT && oldact != CURL_POLL_INOUT) {
             tcp_socket->async_write_some(boost::asio::null_buffers(),
-                                         boost::bind(&event_cb, s,
+                                         boost::bind(&event_cb, sock,
                                                      CURL_POLL_OUT, _1, fdp));
         }
     } else if(act == CURL_POLL_INOUT) {
         if(oldact != CURL_POLL_IN && oldact != CURL_POLL_INOUT) {
             tcp_socket->async_read_some(boost::asio::null_buffers(),
-                                        boost::bind(&event_cb, s,
+                                        boost::bind(&event_cb, sock,
                                                     CURL_POLL_IN, _1, fdp));
         }
         if(oldact != CURL_POLL_OUT && oldact != CURL_POLL_INOUT) {
             tcp_socket->async_write_some(boost::asio::null_buffers(),
-                                        boost::bind(&event_cb, s,
+                                         boost::bind(&event_cb, sock,
                                                     CURL_POLL_OUT, _1, fdp));
         }
     }
 }
-void HttpManager::remsock(int* f) {
-    if(f) {
-        free(f);
+void HttpManager::remsock(int* fd) {
+    if(fd) {
+        free(fd);
     }
 }
-void HttpManager::event_cb(curl_socket_t s, int action, const boost::system::error_code& error, int *fdp) {
-    if(HttpManager::GetInstance()->socket_list_.find(s) == HttpManager::GetInstance()->socket_list_.end()) {
+void HttpManager::event_cb(curl_socket_t sock, int action, const boost::system::error_code& error, int *fdp) {
+    http_manager_->mutex_.lock();
+    auto iter = http_manager_->socket_list_.find(sock);
+    if(iter == http_manager_->socket_list_.end()) {
+        http_manager_->mutex_.unlock();
         return;
     }
 
+    boost::asio::ip::tcp::socket* tcp_socket = iter->second;
+    http_manager_->mutex_.unlock();
+
     /* make sure the event matches what are wanted */
     if(*fdp == action || *fdp == CURL_POLL_INOUT) {
-        CURLMcode rc;
         if(error) {
             action = CURL_CSELECT_ERR;
         }
-        rc = curl_multi_socket_action(HttpManager::GetInstance()->curl_m_, s, action, &HttpManager::GetInstance()->still_running_);
+        curl_multi_socket_action(http_manager_->curl_m_, sock, 
+                                 action, &http_manager_->still_running_);
 
         check_multi_info();
 
         /* keep on watching.
             * the socket may have been closed and/or fdp may have been changed
             * in curl_multi_socket_action(), so check them both */
-        if(!error && HttpManager::GetInstance()->socket_list_.find(s) != HttpManager::GetInstance()->socket_list_.end() && (*fdp == action || *fdp == CURL_POLL_INOUT)) {
-            boost::asio::ip::tcp::socket *tcp_socket = HttpManager::GetInstance()->socket_list_.find(s)->second;
-
+        if(!error && (*fdp == action || *fdp == CURL_POLL_INOUT)) {
             if(action == CURL_POLL_IN) {
                 tcp_socket->async_read_some(boost::asio::null_buffers(),
-                                            boost::bind(&event_cb, s,
+                                            boost::bind(&event_cb, sock,
                                                         action, _1, fdp));
             }
             if(action == CURL_POLL_OUT) {
                 tcp_socket->async_write_some(boost::asio::null_buffers(),
-                                                boost::bind(&event_cb, s,
-                                                            action, _1, fdp));
+                                             boost::bind(&event_cb, sock,
+                                                         action, _1, fdp));
             }
         }
     } 
 }
 
-curl_socket_t HttpManager::opensocket(void *clientp, curlsocktype purpose, struct curl_sockaddr *address) {
+curl_socket_t HttpManager::opensocket(void* clientp, curlsocktype purpose, struct curl_sockaddr* address) {
     curl_socket_t sockfd = CURL_SOCKET_BAD;
 
     /* restrict to IPv4 */
     if(purpose == CURLSOCKTYPE_IPCXN && address->family == AF_INET) {
         /* create a tcp socket object */
-        boost::asio::ip::tcp::socket *tcp_socket =
-            new boost::asio::ip::tcp::socket(HttpManager::GetInstance()->thread_->io_service());
+        boost::asio::ip::tcp::socket* tcp_socket =
+            new boost::asio::ip::tcp::socket(http_manager_->thread_->io_service());
 
         /* open it and get the native handle*/
-        boost::system::error_code ec;
-        tcp_socket->open(boost::asio::ip::tcp::v4(), ec);
+        boost::system::error_code code;
+        tcp_socket->open(boost::asio::ip::tcp::v4(), code);
 
-        if(ec) {
-            /* An error occurred */
-            std::cout << std::endl << "Couldn't open socket [" << ec << "][" <<
-            ec.message() << "]";
-        } else {
+        if(!code) {
             sockfd = tcp_socket->native_handle();
 
             /* save it for monitoring */
-            HttpManager::GetInstance()->socket_list_.insert(std::pair<curl_socket_t,
-                            boost::asio::ip::tcp::socket *>(sockfd, tcp_socket));
+            http_manager_->mutex_.lock();
+            http_manager_->socket_list_[sockfd] = tcp_socket;
+            http_manager_->mutex_.unlock();
         }
     }
 
     return sockfd;
 }
-int HttpManager::close_socket(void *clientp, curl_socket_t item) {
-    auto iter = HttpManager::GetInstance()->socket_list_.find(item);
-    if(iter != HttpManager::GetInstance()->socket_list_.end()) {
+int HttpManager::close_socket(void* clientp, curl_socket_t sock) {
+    http_manager_->mutex_.lock();
+    auto iter = http_manager_->socket_list_.find(sock);
+    if(iter != http_manager_->socket_list_.end()) {
         delete iter->second;
-        HttpManager::GetInstance()->socket_list_.erase(iter);
+        http_manager_->socket_list_.erase(iter);
     }
+    http_manager_->mutex_.unlock();
 
     return 0;
 }
 
-size_t HttpManager::WriteCallback(void *buffer, size_t size, size_t count, void * stream) {
+size_t HttpManager::write_cb(void *buffer, size_t size, size_t count, void * stream) {
     CURL* curl = static_cast<CURL*>(stream);
 
-    HttpManager* http_manager = HttpManager::GetInstance();
+    http_manager_->mutex_.lock();
 
-    http_manager->mutex_.lock();
-
-    auto iter = http_manager->callback_data_list_.find(curl);
-    if (iter == http_manager->callback_data_list_.end()) {
-        http_manager->mutex_.unlock();
+    auto iter = http_manager_->callback_data_list_.find(curl);
+    if (iter == http_manager_->callback_data_list_.end()) {
+        http_manager_->mutex_.unlock();
         return 0;
     }
 
     iter->second.buffer.append((char*)buffer, size*count);
 
-    http_manager->mutex_.unlock();
+    http_manager_->mutex_.unlock();
 
     return size * count;
 }
 
 void HttpManager::check_multi_info() {
-    char *eff_url;
     CURLMsg *msg;
     int msgs_left;
-    CURL *easy;
-    CURLcode res;
-
-    while((msg = curl_multi_info_read(HttpManager::GetInstance()->curl_m_, &msgs_left))) {
+    while((msg = curl_multi_info_read(http_manager_->curl_m_, &msgs_left))) {
         if(msg->msg == CURLMSG_DONE) {
-            HttpManager::GetInstance()->HttpRequestComplete(msg);
+            http_manager_->HttpRequestComplete(msg);
         }
     }
 }

@@ -41,7 +41,8 @@ public:
     };
 
     typedef std::map<std::shared_ptr<HttpRequest>, std::unique_ptr<CURLData>> REQUEST_LIST;
-    typedef std::map<CURL*, CallbackData> CB_DATA_MAP;
+    typedef std::map<CURL*, CallbackData> CB_DATA_LIST;
+    typedef std::map<curl_socket_t, boost::asio::ip::tcp::socket*> SOCKET_LIST;
 
     static HttpManager* GetInstance();
 
@@ -58,16 +59,16 @@ private:
     void HttpRequestComplete(CURLMsg* msg);
     CURLData* CreateCURLData(std::shared_ptr<HttpRequest> request);
 
-    static int multi_timer_cb(CURLM *multi, long timeout_ms);
+    static int multi_timer_cb(CURLM* multi, long timeout_ms);
     static void timer_cb();
-    static int sock_cb(CURL *curl, curl_socket_t sock, int what, void *cbp, void *sockp);
-    static void addsock(curl_socket_t s, CURL* easy, int action);
-    static void setsock(int *fdp, curl_socket_t s, CURL *e, int act, int oldact);
+    static int sock_cb(CURL* curl, curl_socket_t sock, int what, void* cbp, void* sockp);
+    static void addsock(curl_socket_t sock, CURL* easy, int action);
+    static void setsock(int* fdp, curl_socket_t sock, CURL* easy, int act, int oldact);
     static void remsock(int* f);
-    static void event_cb(curl_socket_t s, int action, const boost::system::error_code& error, int *fdp);
-    static curl_socket_t opensocket(void *clientp, curlsocktype purpose, struct curl_sockaddr *address);
-    static int close_socket(void *clientp, curl_socket_t item);
-    static size_t WriteCallback(void *buffer, size_t size, size_t count, void * stream);
+    static void event_cb(curl_socket_t s, int action, const boost::system::error_code& error, int* fdp);
+    static curl_socket_t opensocket(void* clientp, curlsocktype purpose, struct curl_sockaddr* address);
+    static int close_socket(void* clientp, curl_socket_t item);
+    static size_t write_cb(void* buffer, size_t size, size_t count, void* stream);
     static void check_multi_info();
 
 private:
@@ -75,11 +76,11 @@ private:
     int still_running_;
     CURLM* curl_m_;
     boost::mutex mutex_;
-    REQUEST_LIST request_list_;
-    CB_DATA_MAP callback_data_list_;
     async::Timer timer_; 
     std::shared_ptr<async::Thread> thread_;
-    std::map<curl_socket_t, boost::asio::ip::tcp::socket*> socket_list_;
+    REQUEST_LIST request_list_;
+    CB_DATA_LIST callback_data_list_;
+    SOCKET_LIST socket_list_;
 
     static HttpManager* http_manager_;
 };
