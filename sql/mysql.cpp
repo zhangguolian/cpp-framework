@@ -58,6 +58,7 @@ bool Mysql::Init(int db_port,
 
     return true;
 }
+
 bool Mysql::Exec(const std::string& sql) {
     if (mysql_query(mysql_, sql.c_str())) {
         LOG_ERROR("Mysql::Exec mysql_query fail, error:%s.", mysql_error(mysql_));
@@ -66,6 +67,7 @@ bool Mysql::Exec(const std::string& sql) {
 
     return true;
 }
+
 bool Mysql::query_row(const std::string& sql,
                       SQL_ROW& row) {
     bool is_success = false;

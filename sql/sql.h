@@ -18,5 +18,5 @@
 
 #pragma once 
 
-#include <sql/sql_base.h>
+#include <sql/sql_base.hpp>
 #include <sql/mysql.h>

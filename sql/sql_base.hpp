@@ -30,17 +30,32 @@ namespace sql {
 typedef std::map<std::string, std::string> SQL_ROW;
 typedef std::vector<std::map<std::string, std::string>> SQL_ROWS;
 
+// Database base class.
 class SqlBase {
 public:
     SqlBase() {}
     virtual ~SqlBase() {}
+
+    // Database initialization, implemented by derived classes.
+    //
+    // Param db_port is database port.
+    // Param db_host is database host.
+    // Param db_user is database user.
+    // Param db_pass is database user's password.
+    // Param db_name is database name.
     virtual bool Init(int db_port,
                       const std::string& db_host,
                       const std::string& db_user,
                       const std::string& db_pass,
                       const std::string& db_name) = 0;
+
+    // Database execution statement operation, like insert, update,
+    // implemented by derived classes.
     virtual bool Exec(const std::string& sql) = 0;
 
+    // Query database single record.
+    // Parse all members of the object through the reflect library 
+    // and assign values through database field names and member types
     template<class T>
     bool QueryRow(const std::string& sql,
                   T& result) {
@@ -75,6 +90,9 @@ public:
         return true;
     }
 
+    // Query multiple records in the database.
+    // Parse all members of the object through the reflect library 
+    // and assign values through database field names and member types
     template<class T>
     bool QueryRows(const std::string& sql,
                    std::vector<T>& results) {
@@ -114,6 +132,8 @@ public:
     }
 
 private:
+    // The concrete implementation of the query, 
+    // implemented by a derived class.
     virtual bool query_row(const std::string& sql,
                            SQL_ROW& row) = 0;
     virtual bool query_rows(const std::string& sql,

@@ -18,7 +18,7 @@
 
 #pragma once 
 
-#include <sql/sql_base.h>
+#include <sql/sql_base.hpp>
 #include <mysql/mysql.h>
 
 namespace sql {
@@ -28,11 +28,21 @@ public:
     Mysql();
     virtual ~Mysql();
 
+    // Mysql Database initialization.
+    //
+    // Param db_port is database port.
+    // Param db_host is database host.
+    // Param db_user is database user.
+    // Param db_pass is database user's password.
+    // Param db_name is database name.
     bool Init(int db_port,
               const std::string& db_host,
               const std::string& db_user,
               const std::string& db_pass,
               const std::string& db_name) override;
+    
+    // Mysql Database execution statement operation, 
+    // like insert, update,
     bool Exec(const std::string& sql) override;
 
 private:
