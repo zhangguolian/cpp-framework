@@ -31,18 +31,40 @@ using boost::program_options::error_with_no_option_name;
 
 namespace args {
 
+// Console parameter parsing class.
+// It can parse the parameters of the main function 
+// passed in when the program starts.
 class ArgsParse {
 public:
+    typedef std::map<std::string, std::shared_ptr<bool>> OPTION_LIST;
+
     ArgsParse();
+    // Output instructions contains usage, 
+    // like Usage: args_test [options...]
     ArgsParse(const std::string& usage);
     ~ArgsParse();
 
+    // Parsing command line arguments.
+    // param argc and param argv are the main function parameter.
     void Parse(int argc, char* argv[]);
+
+    // Output an introduction to all parameters.
     void PrintfDescription();
 
+    // Add a parameter with no value.
+    // Param name is parameter name.
+    // Param description is introduction of parameter.
+    // Return a pointer of type bool, after calling the parse function,
+    // true if this argument is passed in, otherwise false
     std::shared_ptr<bool> Get(const std::string& name,
                               const std::string& description);
-             
+
+    // Add a value parameter.
+    // Param name is parameter name.
+    // Param default_value is default value of the parameter.
+    // Param description is introduction of parameter.
+    // Return a pointer of type T, after calling the parse function,
+    // will get the value passed in.
     template<typename T>
     std::unique_ptr<T> Get(const std::string& name,
                            const T& default_value,
@@ -62,7 +84,10 @@ public:
 private:
     variables_map args_list_;
     options_description desc_;
-    std::map<std::string, std::shared_ptr<bool>> option_list_;
+
+    // Save a list of parameters with no values, 
+    // assign true or false.
+    OPTION_LIST option_list_;
 };
 
-};
+}; // namespace args

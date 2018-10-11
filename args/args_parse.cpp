@@ -40,8 +40,11 @@ void ArgsParse::Parse(int argc, char* argv[]) {
         LOG_ERROR("ArgsParse::Parse fail, error:%s.", ex.what());
     }
 
+    // Save all parameters to args_list_
     notify(args_list_);
 
+    // Determine if a parameter with no value exists, 
+    // and if it exists, assign it to true
     for (auto iter = option_list_.begin(); iter != option_list_.end(); iter++) {
         if (args_list_.count(iter->first) > 0) {
             *iter->second = true;
@@ -50,6 +53,7 @@ void ArgsParse::Parse(int argc, char* argv[]) {
 
     return;
 }
+
 void ArgsParse::PrintfDescription() {
     std::cout << desc_ << std::endl;
 }
