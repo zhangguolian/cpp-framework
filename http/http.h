@@ -21,11 +21,14 @@
 #include <http/http_request.h>
 #include <http/http_manager.h>
 
+// Initialize the http module
 #define HTTP_INIT()\
     http::HttpManager::GetInstance()->Start();
 
+// Start an http request
 #define START_HTTP_REQUEST(request)\
     http::HttpManager::GetInstance()->AddHttpRequest(request);
 
+// Cancel an http request
 #define CANCEL_HTTP_REQUEST(request)\
     http::HttpManager::GetInstance()->CancelHttpRequest(request);

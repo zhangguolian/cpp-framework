@@ -48,7 +48,16 @@ HttpManager::HttpManager()
 
 }
 HttpManager::~HttpManager() {
-    Cancel();
+    for (auto iter = callback_data_list_.begin(); iter != callback_data_list_.end(); iter++) {
+        curl_multi_remove_handle(curl_m_, iter->first);
+        curl_easy_cleanup(iter->first);
+    }
+    curl_multi_cleanup(curl_m_);
+    curl_m_ = NULL;
+    request_list_.clear();
+    callback_data_list_.clear();
+
+    return;
 }
 
 HttpManager* HttpManager::GetInstance() {
@@ -77,23 +86,11 @@ void HttpManager::Start() {
     curl_multi_setopt(curl_m_, CURLMOPT_SOCKETDATA, curl_m_);
     curl_multi_setopt(curl_m_, CURLMOPT_TIMERFUNCTION, multi_timer_cb);
     curl_multi_setopt(curl_m_, CURLMOPT_TIMERDATA, curl_m_);
-}
-void HttpManager::Cancel() {
-    if (!is_running_) {
-        return;  
-    }
 
-    for (auto iter = callback_data_list_.begin(); iter != callback_data_list_.end(); iter++) {
-        curl_multi_remove_handle(curl_m_, iter->first);
-        curl_easy_cleanup(iter->first);
-    }
-    curl_multi_cleanup(curl_m_);
-    curl_m_ = NULL;
-    request_list_.clear();
-    callback_data_list_.clear();
+    return;
 }
 
-void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
+void HttpManager::AddHttpRequest(const std::shared_ptr<HttpRequest>& request) {
     if (*thread_ != CURRENT_THREAD) {
         thread_->PostTask(boost::bind(&HttpManager::AddHttpRequest, this, request));
         return;
@@ -108,8 +105,10 @@ void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
     request_list_[request].reset(curl_data);
     callback_data_list_[curl_data->curl_].request = request;
     curl_multi_add_handle(curl_m_, curl_data->curl_);
+
+    return;
 }
-void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
+void HttpManager::CancelHttpRequest(const std::shared_ptr<HttpRequest>& request) {
     if (*thread_ != CURRENT_THREAD) {
         thread_->PostTask(boost::bind(&HttpManager::CancelHttpRequest, this, request));
         return;
@@ -128,7 +127,7 @@ void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
     return;
 }
 
-HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> request) {
+HttpManager::CURLData* HttpManager::CreateCURLData(const std::shared_ptr<HttpRequest>& request) {
     CURLData* curl_data = new CURLData();
     curl_data->curl_ = curl_easy_init();
 
@@ -137,7 +136,8 @@ HttpManager::CURLData* HttpManager::CreateCURLData(std::shared_ptr<HttpRequest> 
         if (request->http_mode() == HttpRequest::HttpMode::GET) {
             url += "?" + MapToUrlQuery(request->params());
         } else {
-            curl_data->headers_ = curl_slist_append(curl_data->headers_, "Content-Type: application/x-www-form-urlencoded");
+            curl_data->headers_ = curl_slist_append(curl_data->headers_, 
+                                                    "Content-Type: application/x-www-form-urlencoded");
             curl_data->headers_ = curl_slist_append(curl_data->headers_, "Accept-Language: zh-cn");
             curl_data->post_data_ = MapToUrlQuery(request->params());
             curl_easy_setopt(curl_data->curl_, CURLOPT_HTTPHEADER, curl_data->headers_);
@@ -207,14 +207,15 @@ void HttpManager::HttpRequestComplete(CURLMsg* msg) {
     return;
 }
 
-int HttpManager::multi_timer_cb(CURLM *multi, long timeout_ms) {
+int HttpManager::multi_timer_cb(CURLM *multi, 
+                                long timeout_ms) {
     if(timeout_ms > 0) {
-        /* update timer */
+        // update timer
         http_manager_->timer_.CreateOnceTimerTask(boost::bind(&timer_cb), 
-            boost::posix_time::millisec(timeout_ms), 
-            http_manager_->thread_);
+                                                  boost::posix_time::millisec(timeout_ms), 
+                                                  http_manager_->thread_);
     } else if(timeout_ms == 0) {
-        /* call timeout function immediately */
+        // call timeout function immediately
         timer_cb();
     }
 
@@ -226,30 +227,40 @@ void HttpManager::timer_cb() {
 
     check_multi_info();
 }
-int HttpManager::sock_cb(CURL* curl, curl_socket_t sock, int what, void* cbp, void* sockp) {
+int HttpManager::sock_cb(CURL* easy, 
+                         curl_socket_t sock, 
+                         int what, 
+                         void* cbp, 
+                         void* sockp) {
     int* actionp = (int*)sockp;
 
     if(what == CURL_POLL_REMOVE) {
         remsock(actionp);
     } else {
         if(!actionp) {
-            addsock(sock, curl, what);
+            addsock(sock, easy, what);
         } else {;
-            setsock(actionp, sock, curl, what, *actionp);
+            setsock(actionp, sock, easy, what, *actionp);
         }
     }
 
     return 0;
 }
 
-void HttpManager::addsock(curl_socket_t sock, CURL* easy, int action) {
-    /* fdp is used to store current action */
+void HttpManager::addsock(curl_socket_t sock, 
+                          CURL* easy, 
+                          int action) {
+    // fdp is used to store current action 
     int* fdp = (int *)calloc(sizeof(int), 1);
 
     setsock(fdp, sock, easy, action, 0);
     curl_multi_assign(http_manager_->curl_m_, sock, fdp);
 }
-void HttpManager::setsock(int *fdp, curl_socket_t sock, CURL* easy, int act, int oldact) {
+void HttpManager::setsock(int *fdp, 
+                          curl_socket_t sock, 
+                          CURL* easy, 
+                          int act, 
+                          int oldact) {
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter == http_manager_->socket_list_.end()) {
         return;
@@ -279,22 +290,29 @@ void HttpManager::setsock(int *fdp, curl_socket_t sock, CURL* easy, int act, int
         if(oldact != CURL_POLL_OUT && oldact != CURL_POLL_INOUT) {
             tcp_socket->async_write_some(boost::asio::null_buffers(),
                                          boost::bind(&event_cb, sock,
-                                                    CURL_POLL_OUT, _1, fdp));
+                                                     CURL_POLL_OUT, _1, fdp));
         }
     }
+
+    return;
 }
-void HttpManager::remsock(int* fd) {
-    if(fd) {
-        free(fd);
+void HttpManager::remsock(int* fdp) {
+    if(fdp) {
+        free(fdp);
     }
+
+    return;
 }
-void HttpManager::event_cb(curl_socket_t sock, int action, const boost::system::error_code& error, int *fdp) {
+void HttpManager::event_cb(curl_socket_t sock, 
+                           int action, 
+                           const boost::system::error_code& error, 
+                           int *fdp) {
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter == http_manager_->socket_list_.end()) {
         return;
     }
 
-    /* make sure the event matches what are wanted */
+    // make sure the event matches what are wanted 
     if(*fdp == action || *fdp == CURL_POLL_INOUT) {
         if(error) {
             action = CURL_CSELECT_ERR;
@@ -321,32 +339,37 @@ void HttpManager::event_cb(curl_socket_t sock, int action, const boost::system::
             }
         }
     } 
+
+    return;
 }
 
-curl_socket_t HttpManager::opensocket(void* clientp, curlsocktype purpose, struct curl_sockaddr* address) {
+curl_socket_t HttpManager::opensocket(void* clientp, 
+                                      curlsocktype purpose, 
+                                      struct curl_sockaddr* address) {
     curl_socket_t sockfd = CURL_SOCKET_BAD;
 
-    /* restrict to IPv4 */
+    // restrict to IPv4
     if(purpose == CURLSOCKTYPE_IPCXN && address->family == AF_INET) {
-        /* create a tcp socket object */
+        // create a tcp socket object 
         boost::asio::ip::tcp::socket* tcp_socket =
             new boost::asio::ip::tcp::socket(http_manager_->thread_->io_service());
 
-        /* open it and get the native handle*/
+        // open it and get the native handle
         boost::system::error_code code;
         tcp_socket->open(boost::asio::ip::tcp::v4(), code);
 
         if(!code) {
             sockfd = tcp_socket->native_handle();
 
-            /* save it for monitoring */
+            // save it for monitoring 
             http_manager_->socket_list_[sockfd] = tcp_socket;
         }
     }
 
     return sockfd;
 }
-int HttpManager::close_socket(void* clientp, curl_socket_t sock) {
+int HttpManager::close_socket(void* clientp, 
+                              curl_socket_t sock) {
     auto iter = http_manager_->socket_list_.find(sock);
     if(iter != http_manager_->socket_list_.end()) {
         delete iter->second;
@@ -356,7 +379,10 @@ int HttpManager::close_socket(void* clientp, curl_socket_t sock) {
     return 0;
 }
 
-size_t HttpManager::write_cb(void *buffer, size_t size, size_t count, void * stream) {
+size_t HttpManager::write_cb(void* buffer, 
+                             size_t size, 
+                             size_t count, 
+                             void* stream) {
     CURL* curl = static_cast<CURL*>(stream);
 
     auto iter = http_manager_->callback_data_list_.find(curl);
@@ -371,12 +397,14 @@ size_t HttpManager::write_cb(void *buffer, size_t size, size_t count, void * str
 
 void HttpManager::check_multi_info() {
     CURLMsg *msg;
-    int msgs_left;
+    int msgs_left = 0;
     while((msg = curl_multi_info_read(http_manager_->curl_m_, &msgs_left))) {
         if(msg->msg == CURLMSG_DONE) {
             http_manager_->HttpRequestComplete(msg);
         }
     }
+
+    return;
 }
 
 }

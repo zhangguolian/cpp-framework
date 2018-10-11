@@ -28,8 +28,10 @@ namespace http {
 
 class HttpRequest;
 
+// Http task scheduling class
 class HttpManager {
 public:
+    // Callback data when the request is completed
     struct CallbackData {
         CallbackData() {}
         ~CallbackData() {}
@@ -38,6 +40,7 @@ public:
         std::shared_ptr<http::HttpRequest> request;
     };
 
+    // Request data to be used
     struct CURLData {
         CURLData() : curl_(NULL)
                    , headers_(NULL) {}
@@ -65,28 +68,47 @@ public:
     static HttpManager* GetInstance();
 
     void Start();
-    void Cancel();
 
-    void AddHttpRequest(std::shared_ptr<HttpRequest> request);
-    void CancelHttpRequest(std::shared_ptr<HttpRequest> request);
+    void AddHttpRequest(const std::shared_ptr<HttpRequest>& request);
+    void CancelHttpRequest(const std::shared_ptr<HttpRequest>& request);
 
 private:
     HttpManager();
     ~HttpManager();
 
     void HttpRequestComplete(CURLMsg* msg);
-    CURLData* CreateCURLData(std::shared_ptr<HttpRequest> request);
+    CURLData* CreateCURLData(const std::shared_ptr<HttpRequest>& request);
 
-    static int multi_timer_cb(CURLM* multi, long timeout_ms);
+    static int multi_timer_cb(CURLM* multi, 
+                              long timeout_ms);
     static void timer_cb();
-    static int sock_cb(CURL* curl, curl_socket_t sock, int what, void* cbp, void* sockp);
-    static void addsock(curl_socket_t sock, CURL* easy, int action);
-    static void setsock(int* fdp, curl_socket_t sock, CURL* easy, int act, int oldact);
-    static void remsock(int* f);
-    static void event_cb(curl_socket_t s, int action, const boost::system::error_code& error, int* fdp);
-    static curl_socket_t opensocket(void* clientp, curlsocktype purpose, struct curl_sockaddr* address);
-    static int close_socket(void* clientp, curl_socket_t item);
-    static size_t write_cb(void* buffer, size_t size, size_t count, void* stream);
+    static int sock_cb(CURL* easy, 
+                       curl_socket_t sock, 
+                       int what, 
+                       void* cbp, 
+                       void* sockp);
+    static void addsock(curl_socket_t sock, 
+                        CURL* easy, 
+                        int action);
+    static void setsock(int* fdp, 
+                        curl_socket_t sock, 
+                        CURL* easy, 
+                        int act, 
+                        int oldact);
+    static void remsock(int* fdp);
+    static void event_cb(curl_socket_t s, 
+                         int action, 
+                         const boost::system::error_code& error, 
+                         int* fdp);
+    static curl_socket_t opensocket(void* clientp, 
+                                    curlsocktype purpose, 
+                                    struct curl_sockaddr* address);
+    static int close_socket(void* clientp, 
+                            curl_socket_t sock);
+    static size_t write_cb(void* buffer, 
+                           size_t size, 
+                           size_t count, 
+                           void* stream);
     static void check_multi_info();
 
 private:

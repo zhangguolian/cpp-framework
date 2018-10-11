@@ -25,24 +25,30 @@
 
 namespace http {
 
+// Http request class.
+// Use this class to set the request type, request parameters, 
+// request callbacks, and get the result of the request.
 class HttpRequest {
 public:
+    // Request a callback class.
     class Delegate {
     public:
+        // Callback notifications are sent through this function 
+        // when the request is completed.
         virtual void OnHttpRequestComplete(std::shared_ptr<HttpRequest> request) = 0;
     };
 
+    // Http request type get or post.
     enum HttpMode {
         GET = 0,
         POST,
     };
 
+    // Http request status.
     enum Status {
-        INIT = 0,
-        IO_PENDING,
-        SUCCESS,
-        CANCELED,
-        FAILED,
+        INIT = 0, // Initialization state
+        SUCCESS,  // Request success.
+        FAILED,   // Request failed, http error.
     };
 
     HttpRequest(HttpMode http_mode,
