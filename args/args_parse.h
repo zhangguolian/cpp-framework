@@ -46,7 +46,7 @@ public:
 
     // Parsing command line arguments.
     // param argc and param argv are the main function parameter.
-    void Parse(int argc, char* argv[]);
+    bool Parse(int argc, char* argv[]);
 
     // Output an introduction to all parameters.
     void PrintfDescription();

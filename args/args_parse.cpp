@@ -33,11 +33,12 @@ ArgsParse::~ArgsParse() {
 
 }
 
-void ArgsParse::Parse(int argc, char* argv[]) {
+bool ArgsParse::Parse(int argc, char* argv[]) {
     try {
         store(parse_command_line(argc, argv, desc_), args_list_);
     } catch(error_with_no_option_name& ex) {
         LOG_ERROR("ArgsParse::Parse fail, error:%s.", ex.what());
+        return false;
     }
 
     // Save all parameters to args_list_
@@ -51,7 +52,7 @@ void ArgsParse::Parse(int argc, char* argv[]) {
         }
     }
 
-    return;
+    return true;
 }
 
 void ArgsParse::PrintfDescription() {
