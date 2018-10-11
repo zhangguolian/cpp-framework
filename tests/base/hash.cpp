@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     std::cout << "sha384:" << base::sha384("test") << std::endl;
     std::cout << "sha512:" << base::sha512("test") << std::endl;
 
-    auto output =  base::encode_aes("test333333333333333333333333333333333333", "123456");
+    auto output =  base::encode_aes("test", "123456");
     std::cout << base::decode_aes(output, "123456") << std::endl;
 
     std::string data = "0xb68788c83c2f1124578799e618c40c9467103160b68788c83c2f1124578799e618c40c9467103160";
@@ -41,8 +41,9 @@ int main(int argc, char** argv) {
     std::cout << "encode_rsa:" << encode_data << std::endl;
     std::cout << "decode_rsa:" << decode_data << std::endl;
 
-    std::string urlencode = base::encode_url("+8615818225465");
+    std::string urlencode = base::encode_url("+-*/");
     std::cout << "url encode:" << urlencode << std::endl;
     std::cout << "url decode:" << base::decode_url(urlencode) << std::endl;
 
+    return 0;
 }

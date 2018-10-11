@@ -31,15 +31,24 @@ void print_once(int a, int b) {
 }
 
 int main() {
+    // Init thread
     std::shared_ptr<async::Thread> main_thread;
     main_thread.reset(new async::Thread());
+
+    // Init timer
     async::Timer timer; 
     async::Timer timer1; 
 
+    // Create a 2 second timer task
     timer.CreateTimerTask(boost::bind(print, 1, 2), boost::posix_time::seconds(2), main_thread);
+
+    // Create a 2 millisecond single timer task
     timer.CreateOnceTimerTask(boost::bind(print_once, 1, 2), boost::posix_time::millisec(2), main_thread);
+
+    // Create a 6 second timer task
     timer1.CreateTimerTask(boost::bind(print1, 1, 2), boost::posix_time::seconds(6), main_thread);
 
+    // Waiting for thread to end
     main_thread->Join();
     
     return 0;

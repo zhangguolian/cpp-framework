@@ -23,6 +23,7 @@
 int main() {
     INIT_ERRORS_SIGNAL();
 
+    // Crash stack test
     std::string* ptr = NULL;
     std::cout << ptr->c_str() << std::endl;
 

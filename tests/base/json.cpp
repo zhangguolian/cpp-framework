@@ -21,10 +21,12 @@
 
 struct JsonData {
     JsonData() {
+        // Regist reflect params.
         REFLECT_REGIST(this, int, data1);
         REFLECT_REGIST(this, std::string, data2);
     }
     ~JsonData() {
+        // Unregist reflect params.
         REFLECT_UNREGIST(this);
     }
 
@@ -34,6 +36,7 @@ struct JsonData {
 
 struct JsonTest {
     JsonTest() {
+        // Regist reflect params.
         REFLECT_REGIST(this, int, a);
         REFLECT_REGIST(this, bool, b);
         REFLECT_REGIST(this, std::string, c);
@@ -46,6 +49,7 @@ struct JsonTest {
         data.data2 = "json_data";
     }
     ~JsonTest() {
+        // Unregist reflect params.
         REFLECT_UNREGIST(this);
     }
 
@@ -56,12 +60,16 @@ struct JsonTest {
 };
 
 int main() {
+    // Json serialization of json_test
     JsonTest json_test;
     std::string json_marshal = base::JsonMarShal(json_test);
     std::cout << "JsonMarshal:" << json_marshal << std::endl;
+
+    // Parse the json string into json_test1
     JsonTest json_test1;
     if (!base::JsonUnmarshal(json_marshal, json_test1)) {
         std::cout << "JsonUnmarshal fail" << std::endl;
+        return -1;
     } else {
         std::cout << "JsonUnmarshal:" 
                   << json_test1.a << "," 
@@ -70,14 +78,16 @@ int main() {
                   << json_test1.data.data1 << ","
                   << json_test1.data.data2 << ","
                   << std::endl;
+        json_test1.a += 1;
     }
 
-    json_test1.a += 1;
+    // Json arrays serialization for json_test_list
     std::vector<JsonTest> json_test_list;
     json_test_list.push_back(json_test);
     json_test_list.push_back(json_test1);
     std::cout << base::JsonMarShal(json_test_list) << std::endl;
 
+    // Parse the json arrays string into json_test_list1
     std::vector<JsonTest> json_test_list1;
     if (!base::JsonUnmarshal(base::JsonMarShal(json_test_list), json_test_list1)) {
         std::cout << "JsonUnmarshal fail" << std::endl;
