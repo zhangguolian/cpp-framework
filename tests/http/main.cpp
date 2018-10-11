@@ -1,11 +1,11 @@
-#include <httpex/http.h>
+#include <http/http.h>
 #include <jsoncpp/json/json.h>
 #include <errors/errors.h>
 #include <logs/logs.hpp>
 
-class HttpTest : public httpex::HttpRequest::Delegate {
+class HttpTest : public http::HttpRequest::Delegate {
 public:
-    void OnHttpRequestComplete(std::shared_ptr<httpex::HttpRequest> request) override
+    void OnHttpRequestComplete(std::shared_ptr<http::HttpRequest> request) override
     {
         std::cout << "OnRequestComplete" << std::endl;
         std::cout << "res:" << request->response() << std::endl;
@@ -22,15 +22,15 @@ public:
     void Start()
     {
         LOG_INFO("request start");
-        request_.reset(new httpex::HttpRequest(
-            httpex::HttpRequest::HttpMode::POST,
+        request_.reset(new http::HttpRequest(
+            http::HttpRequest::HttpMode::POST,
             "http://www.baidu.com", 
             this));
         request_->add_params("symbol", "btcusdt");
         START_HTTP_REQUEST(request_);
     }
 
-    std::shared_ptr<httpex::HttpRequest> request_;
+    std::shared_ptr<http::HttpRequest> request_;
 };
 
 int main() {

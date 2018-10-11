@@ -23,7 +23,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_subdirectory(base)
 add_subdirectory(http)
-add_subdirectory(httpex)
 add_subdirectory(async)
 add_subdirectory(sql)
 add_subdirectory(logs)
