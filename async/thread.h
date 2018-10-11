@@ -27,16 +27,23 @@
 
 namespace async {
 
+// Thread pool class.
+// Maintained a thread pool and threaded message delivery.
 class Thread {
 public:
+    // Param thread_num is number of worker threads
     Thread(int thread_num = 1);
     ~Thread();
 
+    // Blocking waits for all threads to end.
     void Join();
+
+    // Post a task to the thread pool.
     void PostTask(const boost::function<void(void)>& task);
 
     boost::asio::io_service& io_service();
 
+    // Compare thread ids.
     bool operator==(const boost::thread::id& id) const;
     bool operator!=(const boost::thread::id& id) const;
 
@@ -48,4 +55,4 @@ private:
     boost::asio::io_service io_service_;
 };
 
-};
+}; // namespace async

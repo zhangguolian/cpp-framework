@@ -65,6 +65,7 @@ int Timer::CreateTimerTask(const boost::function<void(void)>& task,
 
     return timer_id; 
 }
+
 void Timer::CancelTimerTask(int timer_id) {
     mutex_.lock();
     timer_list_.erase(timer_id);
@@ -72,6 +73,7 @@ void Timer::CancelTimerTask(int timer_id) {
 
     return;
 }
+
 void Timer::CreateOnceTimerTask(const boost::function<void(void)>& task,
                                 const boost::posix_time::time_duration& expiry_time,
                                 const std::shared_ptr<Thread>& task_thread) {

@@ -21,4 +21,5 @@
 #include <async/timer.h>
 #include <async/thread.h>
 
+// Get the current thread id
 #define CURRENT_THREAD boost::this_thread::get_id()

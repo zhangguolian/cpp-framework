@@ -28,6 +28,8 @@ namespace async {
 
 class Thread;
 
+// Timer thread class.
+// All timers share one thread.
 class TimerDevice {
 private:
     TimerDevice();
@@ -41,15 +43,37 @@ private:
     friend class Timer;
 };
 
+// Timer class.
+// Can post tasks to the specified thread through the timer.
 class Timer {
 public:
+    typedef std::map<int, std::shared_ptr<boost::asio::deadline_timer>> TIMER_LIST;
+
     Timer();
     ~Timer();
   
+    // Create a loop execution timer task, 
+    // the task will be post to the execution thread execution.
+    //
+    // Param task is task function.
+    // Param expiry_time is timer interval time.
+    // Param task_thread is thread executing the task.
+    // Returns the id of this timer task.
     int CreateTimerTask(const boost::function<void(void)>& task, 
                         const boost::posix_time::time_duration& expiry_time,
                         const std::shared_ptr<Thread>& task_thread);
+    
+    // Cancel a loop execution timer task, 
+    //
+    // Param timer_id is CreateTimerTask return.
     void CancelTimerTask(int timer_id);
+
+    // Create a timer task that executes once. 
+    // the task will be post to the execution thread execution.
+    //
+    // Param task is task function.
+    // Param expiry_time is timer interval time.
+    // Param task_thread is thread executing the task.
     void CreateOnceTimerTask(const boost::function<void(void)>& task, 
                              const boost::posix_time::time_duration& expiry_time,
                              const std::shared_ptr<Thread>& task_thread);
@@ -65,8 +89,8 @@ private:
 private:
     int timer_id_;
     boost::mutex mutex_;
-    std::map<int, std::shared_ptr<boost::asio::deadline_timer>> timer_list_;
+    TIMER_LIST timer_list_;
     static TimerDevice timer_device_;
 };
 
-};
+}; // namespace async

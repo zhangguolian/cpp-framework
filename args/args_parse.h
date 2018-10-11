@@ -45,6 +45,7 @@ public:
     ~ArgsParse();
 
     // Parsing command line arguments.
+    //
     // param argc and param argv are the main function parameter.
     bool Parse(int argc, char* argv[]);
 
@@ -52,6 +53,7 @@ public:
     void PrintfDescription();
 
     // Add a parameter with no value.
+    //
     // Param name is parameter name.
     // Param description is introduction of parameter.
     // Return a pointer of type bool, after calling the parse function,
@@ -60,6 +62,7 @@ public:
                               const std::string& description);
 
     // Add a value parameter.
+    //
     // Param name is parameter name.
     // Param default_value is default value of the parameter.
     // Param description is introduction of parameter.
