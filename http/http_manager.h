@@ -50,7 +50,6 @@ public:
     void Cancel();
 
     void AddHttpRequest(std::shared_ptr<HttpRequest> request);
-    void AddHttpRequestOnThread(std::shared_ptr<HttpRequest> request);
     void CancelHttpRequest(std::shared_ptr<HttpRequest> request);
 
 private:

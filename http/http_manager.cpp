@@ -76,9 +76,11 @@ void HttpManager::Cancel() {
 }
 
 void HttpManager::AddHttpRequest(std::shared_ptr<HttpRequest> request) {
-    thread_->PostTask(boost::bind(&HttpManager::AddHttpRequestOnThread, this, request));
-}
-void HttpManager::AddHttpRequestOnThread(std::shared_ptr<HttpRequest> request) {
+    if (*thread_ != CURRENT_THREAD) {
+        thread_->PostTask(boost::bind(&HttpManager::AddHttpRequest, this, request));
+        return;
+    }
+
     if (request == NULL || request_list_.find(request) != request_list_.end()) {
         return;
     }
@@ -90,6 +92,11 @@ void HttpManager::AddHttpRequestOnThread(std::shared_ptr<HttpRequest> request) {
     curl_multi_add_handle(curl_m_, curl_data->curl_);
 }
 void HttpManager::CancelHttpRequest(std::shared_ptr<HttpRequest> request) {
+    if (*thread_ != CURRENT_THREAD) {
+        thread_->PostTask(boost::bind(&HttpManager::CancelHttpRequest, this, request));
+        return;
+    }
+
     auto iter = request_list_.find(request);
     if (iter == request_list_.end()) {
         return;

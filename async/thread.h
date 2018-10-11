@@ -19,6 +19,9 @@ public:
 
     boost::asio::io_service& io_service();
 
+    bool operator==(const boost::thread::id& id) const;
+    bool operator!=(const boost::thread::id& id) const;
+
 private:
     void TaskThread();
 

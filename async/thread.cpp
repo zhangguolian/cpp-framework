@@ -32,6 +32,25 @@ boost::asio::io_service& Thread::io_service() {
     return io_service_;
 }
 
+bool Thread::operator==(const boost::thread::id& id) const {
+    for (size_t i = 0; i < thread_list_.size(); i++) {
+        if (thread_list_[i]->get_id() == id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+bool Thread::operator!=(const boost::thread::id& id) const {
+    for (size_t i = 0; i < thread_list_.size(); i++) {
+        if (thread_list_[i]->get_id() == id) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void Thread::TaskThread() {
     boost::asio::io_service::work work(io_service_);
     io_service_.run();
