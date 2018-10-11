@@ -21,12 +21,12 @@
 
 struct JsonData {
     JsonData() {
-        // Regist reflect params.
+        // Regist reflect params
         REFLECT_REGIST(this, int, data1);
         REFLECT_REGIST(this, std::string, data2);
     }
     ~JsonData() {
-        // Unregist reflect params.
+        // Unregist reflect params
         REFLECT_UNREGIST(this);
     }
 
@@ -36,7 +36,7 @@ struct JsonData {
 
 struct JsonTest {
     JsonTest() {
-        // Regist reflect params.
+        // Regist reflect params
         REFLECT_REGIST(this, int, a);
         REFLECT_REGIST(this, bool, b);
         REFLECT_REGIST(this, std::string, c);
@@ -49,7 +49,7 @@ struct JsonTest {
         data.data2 = "json_data";
     }
     ~JsonTest() {
-        // Unregist reflect params.
+        // Unregist reflect params
         REFLECT_UNREGIST(this);
     }
 

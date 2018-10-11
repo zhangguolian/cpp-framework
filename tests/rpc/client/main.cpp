@@ -22,8 +22,21 @@
 
 #include <rpc/rpc.h>
 #include <tests/rpc/rpc.grpc.pb.h>
-#include <jsoncpp/json/json.h>
+#include <reflect/reflect.h>
+#include <base/base.h>
 
+struct SearchRequest {
+    SearchRequest() {
+        // Regist reflect params
+        REFLECT_REGIST(this, std::string, data);
+    }
+    ~SearchRequest() {
+        // Unregist reflect params
+        REFLECT_UNREGIST(this);
+    }
+
+    std::string data;
+};
 
 class RpcTestClient : public rpc::RpcClientBase<RpcTestService, RpcTestService::Stub>   {
 public:
@@ -37,10 +50,10 @@ public:
 
     // Assembles the client's payload, sends it and presents the response back
     // from the server.
-    std::string Search(const std::string& user) {
+    std::string Search(const std::string& serach) {
         // Data we are sending to the server.
         RpcTestServiceRequest request;
-        request.set_request(user);
+        request.set_request(serach);
 
         // Container for the data we expect from the server.
         RpcTestServiceResponse response;
@@ -68,11 +81,12 @@ int main(int argc, char** argv) {
     // are created. This channel models a connection to an endpoint (in this case,
     // localhost at port 50051). We indicate that the channel isn't authenticated
     // (use of InsecureChannelCredentials()).
-    Json::Value value;
-    value["test"] = Json::Value("test");
     RpcTestClient rpc_client("localhost:50051");
-    std::string user(value.toStyledString());
-    std::string reply = rpc_client.Search(user);
+
+    SearchRequest search;
+    search.data = "Hello Word!";
+
+    std::string reply = rpc_client.Search(base::JsonMarShal(search));
     std::cout << "Rpc client received: " << reply << std::endl;
 
     return 0;

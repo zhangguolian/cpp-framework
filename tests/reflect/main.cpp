@@ -22,11 +22,13 @@
 
 struct Test {
     Test() {
+        // Regist reflect params
         REFLECT_REGIST(this, int, a);
         REFLECT_REGIST(this, std::string, b);
         REFLECT_REGIST(this, float, c);
     }
     ~Test() {
+        // Unregist reflect params
         REFLECT_UNREGIST(this);
     }
 
@@ -37,10 +39,12 @@ struct Test {
 
 template<class T>
 void ReflectMember(const T& data) {
+    // Parse all members of the object
     auto members = REFLECT_MEMBERS(&data);
     for (size_t i = 0; i < members.size(); i++) {
         if (reflect::TypeIsInt(members[i].type)) {
             printf("%s %s %d\n", members[i].type.c_str(), members[i].name.c_str(), *(int*)members[i].value);
+            // Modify the value of an object member
             *(int*)members[i].value = 2;
         } else if (reflect::TypeIsFloat(members[i].type)) {
             printf("%s %s %f\n", members[i].type.c_str(), members[i].name.c_str(), *(float*)members[i].value);
@@ -56,7 +60,9 @@ int main() {
     test.a = 1;
     test.b = "test";
     test.c = 0.1;
+
     ReflectMember(test);
+    // Verify that the modification was successful
     printf("a:%d\n", test.a);
 
     return 0;

@@ -19,45 +19,50 @@
 #include <iostream>
 #include <rpc/rpc.h>
 #include <tests/rpc/rpc.grpc.pb.h>
-#include <jsoncpp/json/json.h>
 #include <logs/logs.hpp>
+#include <reflect/reflect.h>
+#include <base/base.h>
 
-// RPC_SERVICE_METHOD(RpcTestService, Search) {
-//     printf("RpcTestService Search req:%s\n", request->request().c_str());
-//     response->set_result("success");
-//     return rpc::Status::OK;
-// }
+struct SearchRequest {
+    SearchRequest() {
+        // Regist reflect params
+        REFLECT_REGIST(this, std::string, data);
+    }
+    ~SearchRequest() {
+        // Unregist reflect params
+        REFLECT_UNREGIST(this);
+    }
 
+    std::string data;
+};
+
+// Define rpc service
 RPC_SERVICE(RpcTestService) {
+    // Define rpc service method
     RPC_METHOD(RpcTestService, Search);
 };
 
+// Register rpc service
 RPC_SERVICE_DEFINE(RpcTestService);
 
+// Define rpc service method
 RPC_METHOD_DEFINE(RpcTestService, Search) {
     printf("RpcTestService Search req:%s\n", request->request().c_str());
 
-    Json::Value json_value;
-    Json::Reader json_reader;
-    if (!json_reader.parse(request->request(), json_value)) {
-        LOG_ERROR("RpcTestService::Search json_reader.parse fail, req:%s.", 
-                request->request().c_str());
-        return rpc::Status(rpc::StatusCode::INVALID_ARGUMENT, "Invail params");  
+    SearchRequest search;
+    if (!base::JsonUnmarshal(request->request(), search)) {
+        printf("JsonUnmarshal fail\n");
+        return rpc::Status(rpc::StatusCode::UNKNOWN, "Invail params");
     }
 
-    if (!json_value["test"].isString()) {
-        LOG_ERROR("RpcTestService::Search json_reader.parse fail, req:%s.", 
-                request->request().c_str());
-        return rpc::Status(rpc::StatusCode::INVALID_ARGUMENT, "Invail params");
-    }
-
-    printf("test:%s\n", json_value["test"].asString().c_str());
+    printf("data:%s\n", search.data.c_str());
 
     response->set_result("success");
     return rpc::Status::OK;
 }
 
 int main() {
+    // Start rpc server
     START_RPC_SERVER("127.0.0.1", 50051);
 
     return 0;

@@ -21,14 +21,17 @@
 #include <logs/logs.hpp>
 #include <reflect/reflect.h>
 
+// Storage record structure
 struct AdverInfo {
     AdverInfo() {
+        // Regist reflect params
         REFLECT_REGIST(this, int64_t, id);
         REFLECT_REGIST(this, std::string, adver_name);
         REFLECT_REGIST(this, std::string, adver_url);
         REFLECT_REGIST(this, int, type);
     }
     ~AdverInfo() {
+        // Unregist reflect params
         REFLECT_UNREGIST(this);
     }
 
@@ -40,8 +43,10 @@ struct AdverInfo {
 
 int main()
 {
+    // Init mysql driver
     sql::SqlBase* sql = new sql::Mysql();
     sql->Init(3306, "localhost", "root", "root", "exchange_server");
+
     LOG_INFO("QueryRow.");
     AdverInfo adver_info;
     if (!sql->QueryRow("select * from adver_info", adver_info)) {

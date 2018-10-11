@@ -22,19 +22,27 @@
 
 class HttpTest : public http::HttpRequest::Delegate {
 public:
+    // Handle http response 
     void OnHttpRequestComplete(std::shared_ptr<http::HttpRequest> request) override
     {
         std::cout << "OnRequestComplete" << std::endl;
         std::cout << "res:" << request->response() << std::endl;
     }
 
+    // Start http request
     void Start()
     {
         LOG_INFO("request start");
+        // Create http request
         request_.reset(new http::HttpRequest(
             http::HttpRequest::HttpMode::POST,
-            "http://www.baidu.com", 
+            "http://localhost:8080", 
             this));
+
+        // Add request params
+        request_->add_params("key", "test");
+
+        // Start http request
         START_HTTP_REQUEST(request_);
     }
 
@@ -42,9 +50,12 @@ public:
 };
 
 int main() {
+    // Init crash signal.
     INIT_CRASH_SIGNAL();
+    // Init http module
     HTTP_INIT();
 
+    // Start http request
     HttpTest http_test;
     http_test.Start();
 
@@ -53,6 +64,7 @@ int main() {
         http_test_list.push_back(http_test);
     }
 
+    // Violence test http request
     while (true) {
         for (size_t i = 0; i < http_test_list.size(); i++) {
             http_test_list[i].Start();
