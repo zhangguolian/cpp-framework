@@ -163,4 +163,4 @@ exit:
     return is_success;
 }
 
-}
+} // namespace sql

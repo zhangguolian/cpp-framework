@@ -75,4 +75,4 @@ bool StringToBool(const std::string& data) {
     return false;
 }
 
-}
+} // namespace base

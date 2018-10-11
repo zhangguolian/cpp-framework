@@ -164,4 +164,4 @@ bool JsonUnmarshal(const std::string& data,
     return true;
 }
 
-}
+} // namespace base

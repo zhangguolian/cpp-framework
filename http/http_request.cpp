@@ -92,4 +92,4 @@ void HttpRequest::set_response(const std::string& response) {
     response_ = response;
 }
 
-}
+} // namespace http

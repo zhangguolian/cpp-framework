@@ -120,4 +120,4 @@ private:
                             SQL_ROWS& row) = 0;
 };
 
-};
+}; // namespace sql

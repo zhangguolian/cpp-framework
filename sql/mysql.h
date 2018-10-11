@@ -45,4 +45,4 @@ private:
     MYSQL* mysql_;
 };
 
-};
+}; // namespace sql

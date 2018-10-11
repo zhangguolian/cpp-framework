@@ -26,6 +26,8 @@
 
 namespace reflect {
 
+// C++ reflection class.
+// Parsing for json and sql members.
 class Reflect {
 public:
     static Reflect* GetInstance();
@@ -45,14 +47,26 @@ private:
     static Reflect* reflect_;
 };
 
-};
+}; // namespace reflect
 
+// Object registration, constructor call in class.
+//
+// Param obj is object pointer.
+// Param type is the type of the member like int.
+// Param name is the name of the member.
 #define REFLECT_REGIST(obj, type, name)\
     reflect::Reflect::GetInstance()->add_member((void*)obj, (void*)&name, #type, #name);
 
+// Object unregistration, destructor call in class.
+//
+// Param obj is object pointer.
 #define REFLECT_UNREGIST(obj)\
     reflect::Reflect::GetInstance()->remove_member((void*)obj);
-  
+
+// Get the list of members of the object.
+//
+// Param obj is object pointer.  
+// Return vector of member.
 #define REFLECT_MEMBERS(obj)\
     reflect::Reflect::GetInstance()->member_list((void*)obj);
     

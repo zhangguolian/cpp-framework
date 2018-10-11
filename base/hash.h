@@ -52,4 +52,4 @@ bool decode_rsa(const std::string& data,
 std::string encode_url(const std::string& data);
 std::string decode_url(const std::string& data);
 
-};
+}; // namespace base

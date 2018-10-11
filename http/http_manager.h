@@ -124,4 +124,4 @@ private:
     static HttpManager* http_manager_;
 };
 
-};
+}; // namespace http

@@ -76,4 +76,4 @@ void Thread::TaskThread() {
     return;
 }
 
-}
+} // namespace async

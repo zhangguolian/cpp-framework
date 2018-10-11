@@ -340,4 +340,4 @@ std::string decode_url(const std::string& data) {
     return result;
 }
 
-}
+} // namespace base

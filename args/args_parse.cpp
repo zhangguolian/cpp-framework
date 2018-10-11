@@ -73,4 +73,4 @@ std::shared_ptr<bool> ArgsParse::Get(const std::string& name,
     return result;
 }
 
-}
+} // namespace args

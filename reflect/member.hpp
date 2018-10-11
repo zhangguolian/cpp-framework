@@ -75,4 +75,4 @@ inline bool TypeIsString(const std::string& type) {
     return false;
 }
 
-};
+}; // namespace reflect

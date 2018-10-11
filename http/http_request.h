@@ -92,4 +92,4 @@ private:
     std::map<std::string, std::string> params_;
 };
 
-};
+}; // namespace http

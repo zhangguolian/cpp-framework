@@ -23,6 +23,9 @@
 
 namespace rpc {
 
+// RPC client base class.
+// The rpc channel is established, and the class is implemented 
+// to implement the rpc client business logic.
 template<class T1, class T2>
 class RpcClientBase {
 public:
@@ -39,4 +42,4 @@ protected:
     std::unique_ptr<T2> stub_;
 };
 
-};
+}; // namespace rpc

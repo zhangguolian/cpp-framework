@@ -54,4 +54,4 @@ const std::vector<Member>& Reflect::member_list(void* obj) {
     return member_list_[obj];
 }
 
-}
+} // namespace reflect

@@ -45,4 +45,4 @@ private:
     static RpcServer* rpc_server_;
 };
 
-};
+}; // namespace rpc

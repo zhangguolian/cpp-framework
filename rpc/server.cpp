@@ -54,5 +54,5 @@ void RpcServer::RegisterService(grpc::Service* service) {
     builder_.RegisterService(service);
 }
 
-}
+} // namespace rpc
 

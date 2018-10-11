@@ -407,4 +407,4 @@ void HttpManager::check_multi_info() {
     return;
 }
 
-}
+} // namespace http
