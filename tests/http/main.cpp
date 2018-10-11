@@ -17,7 +17,7 @@
  */
 
 #include <http/http.h>
-#include <errors/errors.h>
+#include <crash/crash.h>
 #include <logs/logs.hpp>
 
 class HttpTest : public http::HttpRequest::Delegate {
@@ -42,7 +42,7 @@ public:
 };
 
 int main() {
-    INIT_ERRORS_SIGNAL();
+    INIT_CRASH_SIGNAL();
     HTTP_INIT();
 
     HttpTest http_test;

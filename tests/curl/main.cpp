@@ -51,7 +51,7 @@
 #include <iostream>
 #include <logs/logs.hpp>
 #include <async/async.h>
-#include <errors/errors.h>
+#include <crash/crash.h>
 
 #define MSG_OUT stdout /* Send info to stdout, change to stderr if you want */
 
@@ -468,7 +468,7 @@ void init(GlobalInfo* g) {
 
 int main(int argc, char **argv)
 {
-    INIT_ERRORS_SIGNAL();
+    INIT_CRASH_SIGNAL();
 
     main_thread.reset(new async::Thread(1));
     printf("main_thread:%p\n", main_thread.get());

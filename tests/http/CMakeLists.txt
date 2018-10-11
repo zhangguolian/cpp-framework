@@ -19,4 +19,4 @@ file(GLOB headers "*.h")
 
 add_executable(http_test ${sources} ${headers})
 
-target_link_libraries(http_test http async errors jsoncpp)
+target_link_libraries(http_test http async crash jsoncpp)

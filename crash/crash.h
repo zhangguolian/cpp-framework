@@ -25,6 +25,6 @@ void ErrorsSignHandler(int signum);
 
 // Called at the beginning of the main function.
 // Output crash stack when program crashes.
-#define INIT_ERRORS_SIGNAL()\
+#define INIT_CRASH_SIGNAL()\
     signal(SIGSEGV, ErrorsSignHandler);\
     signal(SIGABRT, ErrorsSignHandler);

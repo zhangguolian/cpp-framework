@@ -16,23 +16,16 @@
  *
  */
 
-#include <errors/errors.h>
+#include <crash/crash.h>
+#include <string>
+#include <iostream>
 
-#include <execinfo.h>
-#include <signal.h>
-#include <logs/logs.hpp>
+int main() {
+    INIT_CRASH_SIGNAL();
 
-void ErrorsSignHandler(int signum) {
-    signal(signum, SIG_DFL);
+    // Crash stack test
+    std::string* ptr = NULL;
+    std::cout << ptr->c_str() << std::endl;
 
-    void *array[10];
-    size_t size = backtrace(array, 10);
-    char** strings = (char**)backtrace_symbols(array, size);
-    for (size_t i = 0; i < size; i++) {
-        LOG_ERROR("%lu %s", i, strings[i]);
-    }
-
-    free(strings);
-    exit(-1);
+    return 0;
 }
-

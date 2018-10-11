@@ -17,9 +17,9 @@
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 
-add_library(errors ${sources} ${headers})
+add_library(crash ${sources} ${headers})
 
 install(FILES 
-        ${PROJECT_SOURCE_DIR}/errors/errors.h
-        DESTINATION /usr/local/include/errors/)
-install(TARGETS errors ARCHIVE DESTINATION /usr/local/lib/)
+        ${PROJECT_SOURCE_DIR}/crash/crash.h
+        DESTINATION /usr/local/include/crash/)
+install(TARGETS crash ARCHIVE DESTINATION /usr/local/lib/)
