@@ -20,6 +20,15 @@
 
 #include <rpc/server.h>
 #include <rpc/client.h>
+#include <rpc/async_server.h>
+
+namespace rpc {
+
+typedef grpc::Status Status;
+typedef grpc::StatusCode StatusCode;
+typedef grpc::ClientContext ClientContext;
+
+};
 
 // Start an rpc server.
 //
@@ -54,5 +63,51 @@ RpcTmp##service g_rpc_##service;
 grpc::Status Rpc##service::method(grpc::ServerContext* context,\
                                   const service##Request* request,\
                                   service##Response* response)
+
+
+#define START_ASYNC_RPC_SERVER(host, port)\
+    rpc::AsyncRpcServer::GetInstance()->Run(host, port);
+
+
+
+#define ASYNC_RPC_SERVICE_DEFINE(service)\
+class AsyncRpcTmp##service {\
+public:\
+    AsyncRpcTmp##service() {\
+        rpc::AsyncRpcServer::GetInstance()->RegisterService(&service_);\
+    }\
+    service::AsyncService service_;\
+};\
+AsyncRpcTmp##service g_async_rpc_##service;
+
+#define ASYNC_RPC_METHOD_DEFINE(service, method)\
+class CallData##service##method : public rpc::AsyncRpcServer::CallData {\
+public:\
+    void Proceed() override;\
+    void Handle##method();\
+private:\
+    service##Request request_;\
+    service##Response response_;\
+    grpc::ServerAsyncResponseWriter<service##Response> responder_;\
+};\
+void CallData##service##method::Proceed() {\
+    if (status_ == CREATE) {\
+        status_ = PROCESS;\
+        g_async_rpc_##service.service_->Request##method(&contenx_, &request_,\
+                                                        &responder_,\
+                                                        rpc::AsyncRpcServer::GetInstance()->cq_.get(),\
+                                                        rpc::AsyncRpcServer::GetInstance()->cq_.get(),\
+                                                        this);\
+    } else if (status_ == FINISH) {\
+        delete this;\
+    } else {\
+        status_ = FINISH;\
+        auto call_data = new CallData##service##method(g_async_rpc_##service.service_,\
+                                                       rpc::AsyncRpcServer::GetInstance()->cq_.get());\
+        call_data->Proceed();\
+        Handle##method();\
+    }\
+}\
+void CallData##service##method::Handle##method()
 
                                           

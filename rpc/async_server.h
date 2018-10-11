@@ -19,26 +19,46 @@
 #pragma once 
 
 #include <memory>
+#include <async/async.h>
 #include <grpcpp/grpcpp.h>
 
 namespace rpc {
 
-class RpcServer {
+class AsyncRpcServer {
 public:
-    static RpcServer* GetInstance();
+    class CallData {
+    public:
+        CallData() {}
+        virtual ~CallData() {}
+
+        virtual void Proceed() = 0;
+
+    protected:
+        grpc::ServerContext context_;
+        // Let's implement a tiny state machine with the following states.
+        enum CallStatus { CREATE, PROCESS, FINISH };
+        CallStatus status_;  // The current serving state.
+    };
+
+    static AsyncRpcServer* GetInstance();
     
+    void Join();
     void Run(const std::string& host, int port);
     void RegisterService(grpc::Service* service);
 
 private:
-    RpcServer();
-    ~RpcServer();
+    void HandleRpcs();
 
-private:
+    AsyncRpcServer();
+    ~AsyncRpcServer();
+
+public:
+    async::Thread thread_;
     grpc::ServerBuilder builder_;
     std::unique_ptr<grpc::Server> server_;
+    std::unique_ptr<grpc::ServerCompletionQueue> cq_;
 
-    static RpcServer* rpc_server_;
+    static AsyncRpcServer* rpc_server_;
 };
 
 }; // namespace rpc
