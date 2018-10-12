@@ -28,16 +28,30 @@ struct JsonData {
 struct JsonTest {
     JsonTest() {
         a = 1;
-        b = true;
-        c = "json_test";
+        b = 2;
+        c = 3;
+        d = 4;
+        e = 5;
+        f = 6;
+        g = 0.1;
+        h = 0.2;
+        i = true;
+        j = "test";
         data.data1 = 2;
         data.data2 = "json_data";
     }
 
     // Define reflect params
-    REFLECT_DEFINE(int, a);
-    REFLECT_DEFINE(bool, b);
-    REFLECT_DEFINE(std::string, c);
+    REFLECT_DEFINE(int8_t, a);
+    REFLECT_DEFINE(int, b);
+    REFLECT_DEFINE(int64_t, c);
+    REFLECT_DEFINE(uint8_t, d);
+    REFLECT_DEFINE(uint, e);
+    REFLECT_DEFINE(uint64_t, f);
+    REFLECT_DEFINE(float, g);
+    REFLECT_DEFINE(double, h);
+    REFLECT_DEFINE(bool, i);
+    REFLECT_DEFINE(std::string, j);
     REFLECT_DEFINE(JsonData, data);
 };
 
@@ -57,6 +71,13 @@ int main() {
                   << json_test1.a << "," 
                   << json_test1.b << ","
                   << json_test1.c << "," 
+                  << json_test1.d << "," 
+                  << json_test1.e << "," 
+                  << json_test1.f << "," 
+                  << json_test1.g << "," 
+                  << json_test1.h << "," 
+                  << json_test1.i << "," 
+                  << json_test1.j << "," 
                   << json_test1.data.data1 << ","
                   << json_test1.data.data2 << ","
                   << std::endl;
