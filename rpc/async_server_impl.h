@@ -63,8 +63,6 @@ public:
     std::unique_ptr<async::Thread> thread_;
     std::unique_ptr<grpc::ServerCompletionQueue> cq_;
     std::vector<CallData*> init_call_data_list_; 
-
-    static AsyncRpcServerImpl* rpc_server_;
 };
 
 }; // namespace rpc

@@ -20,8 +20,6 @@
 
 namespace reflect {
 
-Reflect* Reflect::reflect_ = NULL;
-
 Reflect::Reflect() {
 
 }
@@ -30,11 +28,8 @@ Reflect::~Reflect() {
 }
 
 Reflect* Reflect::GetInstance() {
-    if (reflect_ == NULL) {
-        reflect_ = new Reflect();
-    }
-
-    return reflect_;
+    static Reflect reflect;
+    return &reflect;
 }
 
 void Reflect::add_member(void* obj,

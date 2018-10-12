@@ -44,7 +44,6 @@ private:
 
 private:
     std::map<void*, std::vector<Member>> member_list_;
-    static Reflect* reflect_;
 };
 
 }; // namespace reflect
