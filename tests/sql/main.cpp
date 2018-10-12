@@ -23,22 +23,11 @@
 
 // Storage record structure
 struct AdverInfo {
-    AdverInfo() {
-        // Regist reflect params
-        REFLECT_REGIST(this, int64_t, id);
-        REFLECT_REGIST(this, std::string, adver_name);
-        REFLECT_REGIST(this, std::string, adver_url);
-        REFLECT_REGIST(this, int, type);
-    }
-    ~AdverInfo() {
-        // Unregist reflect params
-        REFLECT_UNREGIST(this);
-    }
-
-    int64_t id;
-    std::string adver_name;
-    std::string adver_url;
-    int type;
+    // Define reflect params
+    REFLECT_DEFINE(int64_t, id);
+    REFLECT_DEFINE(std::string, adver_name);
+    REFLECT_DEFINE(std::string, adver_url);
+    REFLECT_DEFINE(int, type);
 };
 
 int main()

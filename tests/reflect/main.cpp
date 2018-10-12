@@ -21,20 +21,10 @@
 #include <string>
 
 struct Test {
-    Test() {
-        // Regist reflect params
-        REFLECT_REGIST(this, int, a);
-        REFLECT_REGIST(this, std::string, b);
-        REFLECT_REGIST(this, float, c);
-    }
-    ~Test() {
-        // Unregist reflect params
-        REFLECT_UNREGIST(this);
-    }
-
-    int a;
-    std::string b;
-    float c;
+    // Define reflect params
+    REFLECT_DEFINE(int, a);
+    REFLECT_DEFINE(std::string, b);
+    REFLECT_DEFINE(float, c);
 };
 
 template<class T>

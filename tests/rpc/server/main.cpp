@@ -24,16 +24,8 @@
 #include <base/base.h>
 
 struct SearchRequest {
-    SearchRequest() {
-        // Regist reflect params
-        REFLECT_REGIST(this, std::string, data);
-    }
-    ~SearchRequest() {
-        // Unregist reflect params
-        REFLECT_UNREGIST(this);
-    }
-
-    std::string data;
+    // Define reflect params
+    REFLECT_DEFINE(std::string, data);
 };
 
 // Define rpc service

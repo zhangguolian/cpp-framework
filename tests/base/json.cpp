@@ -20,43 +20,25 @@
 #include <base/base.h>
 
 struct JsonData {
-    JsonData() {
-        // Regist reflect params
-        REFLECT_REGIST(this, int, data1);
-        REFLECT_REGIST(this, std::string, data2);
-    }
-    ~JsonData() {
-        // Unregist reflect params
-        REFLECT_UNREGIST(this);
-    }
-
-    int data1;
-    std::string data2;
+    // Define reflect params
+    REFLECT_DEFINE(int, data1);
+    REFLECT_DEFINE(std::string, data2);
 };
 
 struct JsonTest {
     JsonTest() {
-        // Regist reflect params
-        REFLECT_REGIST(this, int, a);
-        REFLECT_REGIST(this, bool, b);
-        REFLECT_REGIST(this, std::string, c);
-        REFLECT_REGIST(this, JsonData, data);
-
         a = 1;
         b = true;
         c = "json_test";
         data.data1 = 2;
         data.data2 = "json_data";
     }
-    ~JsonTest() {
-        // Unregist reflect params
-        REFLECT_UNREGIST(this);
-    }
 
-    int a;
-    bool b;
-    std::string c;
-    JsonData data;
+    // Define reflect params
+    REFLECT_DEFINE(int, a);
+    REFLECT_DEFINE(bool, b);
+    REFLECT_DEFINE(std::string, c);
+    REFLECT_DEFINE(JsonData, data);
 };
 
 int main() {

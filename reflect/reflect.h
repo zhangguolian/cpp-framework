@@ -49,19 +49,25 @@ private:
 
 }; // namespace reflect
 
-// Object registration, constructor call in class.
+// Define reflect member and register, 
 //
-// Param obj is object pointer.
 // Param type is the type of the member like int.
 // Param name is the name of the member.
-#define REFLECT_REGIST(obj, type, name)\
-    reflect::Reflect::GetInstance()->add_member((void*)obj, (void*)&name, #type, #name);
+#define REFLECT_DEFINE(type, name)\
+type name;\
+class ReflectTmp##name {\
+public:\
+    ReflectTmp##name(void* obj, void* member, const std::string& str_type, const std::string& str_name) {\
+        obj_ = obj;\
+        reflect::Reflect::GetInstance()->add_member(obj_, member, str_type, str_name);\
+    }\
+    ~ReflectTmp##name() {\
+        reflect::Reflect::GetInstance()->remove_member(obj_);\
+    }\
+    void* obj_;\
+};\
+ReflectTmp##name reflect_tmp_##name = ReflectTmp##name((void*)this, (void*)&name, #type, #name);
 
-// Object unregistration, destructor call in class.
-//
-// Param obj is object pointer.
-#define REFLECT_UNREGIST(obj)\
-    reflect::Reflect::GetInstance()->remove_member((void*)obj);
 
 // Get the list of members of the object.
 //
@@ -69,4 +75,6 @@ private:
 // Return vector of member.
 #define REFLECT_MEMBERS(obj)\
     reflect::Reflect::GetInstance()->member_list((void*)obj);
+
+
     
