@@ -17,9 +17,9 @@
 add_executable(rpc_server_test 
         "server.cpp" 
         ${rpc_test_sources} ${rpc_test_headers})
-target_link_libraries(rpc_server_test rpc protobuf jsoncpp)
+target_link_libraries(rpc_server_test rpc protobuf)
 
 add_executable(async_rpc_server_test 
         "async_server.cpp" 
         ${rpc_test_sources} ${rpc_test_headers})
-target_link_libraries(async_rpc_server_test rpc protobuf jsoncpp)
+target_link_libraries(async_rpc_server_test rpc protobuf)

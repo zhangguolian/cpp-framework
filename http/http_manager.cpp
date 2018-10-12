@@ -22,7 +22,6 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <http/http_request.h>
-#include <base/base.h>
 
 namespace http {
 

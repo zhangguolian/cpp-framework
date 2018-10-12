@@ -19,7 +19,7 @@ file(GLOB headers "*.h")
 
 add_library(base ${sources} ${headers})
 
-target_link_libraries(base reflect crypto event)
+target_link_libraries(base reflect crypto event jsoncpp ${Boost_LIBRARIES})
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/base/base.h
