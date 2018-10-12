@@ -30,10 +30,14 @@ inline Json::Value JsonMarShal(void* data) {
 
     auto members = REFLECT_MEMBERS(data);
     for (size_t i = 0; i < members.size(); i++) {
-        if (reflect::TypeIsInt(members[i].type)) {
+        if (reflect::TypeIsInt8(members[i].type)) {
+            json_value[members[i].name] = *(int8_t*)members[i].value;
+        } else if (reflect::TypeIsInt(members[i].type)) {
             json_value[members[i].name] = *(int*)members[i].value;
         } else if (reflect::TypeIsInt64(members[i].type)) {
             json_value[members[i].name] = Json::Int64(*(int64_t*)members[i].value);
+        } else if (reflect::TypeIsUInt8(members[i].type)) {
+            json_value[members[i].name] = *(uint8_t*)members[i].value;
         } else if (reflect::TypeIsUInt(members[i].type)) {
             json_value[members[i].name] = *(uint*)members[i].value;
         } else if (reflect::TypeIsUInt64(members[i].type)) {

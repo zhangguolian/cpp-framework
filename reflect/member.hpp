@@ -28,53 +28,35 @@ struct Member {
     void* value;
 };
 
+inline bool TypeIsInt8(const std::string& type) {  
+    return (type == "int8_t" || type == "char");
+}
 inline bool TypeIsInt(const std::string& type) {
-    if (type == "int" || type == "int32_t") {
-        return true;
-    }
-    return false;
+    return (type == "int" || type == "int32_t");
 }
 inline bool TypeIsInt64(const std::string& type) {
-    if (type == "int64_t") {
-        return true;
-    }
-    return false;
+    return type == "int64_t";
+}
+inline bool TypeIsUInt8(const std::string& type) {    
+    return type == "uint8_t";
 }
 inline bool TypeIsUInt(const std::string& type) {
-    if (type == "uint" || type == "uint32_t") {
-        return true;
-    }
-    return false;
+    return (type == "uint" || type == "uint32_t");
 }
 inline bool TypeIsUInt64(const std::string& type) {
-    if (type == "uint64_t") {
-        return true;
-    }
-    return false;
+    return type == "uint64_t";
 }
 inline bool TypeIsFloat(const std::string& type) {
-    if (type == "float") {
-        return true;
-    }
-    return false;
+    return type == "float";
 }
 inline bool TypeIsDouble(const std::string& type) {
-    if (type == "double") {
-        return true;
-    }
-    return false;
+    return type == "double";
 }
 inline bool TypeIsBool(const std::string& type) {
-    if (type == "bool") {
-        return true;
-    }
-    return false;
+    return type == "bool";
 }
 inline bool TypeIsString(const std::string& type) {
-    if (type == "std::string" || type == "string") {
-        return true;
-    }
-    return false;
+    return (type == "std::string" || type == "string");
 }
 
 }; // namespace reflect

@@ -32,6 +32,12 @@ std::string StringPrintf(const char* format,  ...)
     return p;
 }
 
+int8_t StringToInt8(const std::string& data) {
+    int8_t result = 0;
+    sscanf(data.c_str(), "%c", &result);
+    return result;
+}
+
 int StringToInt(const std::string& data) {
     int result = 0;
     sscanf(data.c_str(), "%d", &result);
@@ -41,6 +47,12 @@ int StringToInt(const std::string& data) {
 int64_t StringToInt64(const std::string& data) {
     int64_t result = 0;
     sscanf(data.c_str(), "%ld", &result);
+    return result;
+}
+
+uint8_t StringToUInt8(const std::string& data) {
+    uint8_t result = 0;
+    sscanf(data.c_str(), "%c", &result);
     return result;
 }
 

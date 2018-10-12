@@ -66,10 +66,14 @@ public:
 
         auto members = REFLECT_MEMBERS(&result);
         for (size_t i = 0; i < members.size(); i++) {
-            if (reflect::TypeIsInt(members[i].type)) {
+            if (reflect::TypeIsInt8(members[i].type)) {
+                *(int8_t*)members[i].value = base::StringToInt8(row[members[i].name]);
+            } else if (reflect::TypeIsInt(members[i].type)) {
                 *(int*)members[i].value = base::StringToInt(row[members[i].name]);
             } else if (reflect::TypeIsInt64(members[i].type)) {
                 *(int64_t*)members[i].value = base::StringToInt64(row[members[i].name]);
+            } else if (reflect::TypeIsUInt8(members[i].type)) {
+                *(uint8_t*)members[i].value = base::StringToUInt8(row[members[i].name]);
             } else if (reflect::TypeIsUInt(members[i].type)) {
                 *(uint*)members[i].value = base::StringToUInt(row[members[i].name]);
             } else if (reflect::TypeIsUInt64(members[i].type)) {
@@ -105,19 +109,23 @@ public:
             T result;
             auto members = REFLECT_MEMBERS(&result);
             for (size_t j = 0; j < members.size(); j++) {
-                if (reflect::TypeIsInt(members[j].type)) {
+                if (reflect::TypeIsInt8(members[j].type)) {
+                    *(int8_t*)members[j].value = base::StringToInt8(rows[i][members[j].name]);
+                } else if (reflect::TypeIsInt(members[j].type)) {
                     *(int*)members[j].value = base::StringToInt(rows[i][members[j].name]);
                 } else if (reflect::TypeIsInt64(members[j].type)) {
                     *(int64_t*)members[j].value = base::StringToInt64(rows[i][members[j].name]);
+                } else if (reflect::TypeIsUInt8(members[j].type)) {
+                    *(uint8_t*)members[j].value = base::StringToUInt8(rows[i][members[j].name]);
                 } else if (reflect::TypeIsUInt(members[j].type)) {
                     *(uint*)members[j].value = base::StringToUInt(rows[i][members[j].name]);
                 } else if (reflect::TypeIsUInt64(members[j].type)) {
                     *(uint64_t*)members[j].value = base::StringToUInt64(rows[i][members[j].name]);
-                } else if (reflect::TypeIsFloat(members[i].type)) {
+                } else if (reflect::TypeIsFloat(members[j].type)) {
                     *(float*)members[j].value = base::StringToFloat(rows[i][members[j].name]);
-                } else if (reflect::TypeIsDouble(members[i].type)) {
+                } else if (reflect::TypeIsDouble(members[j].type)) {
                     *(double*)members[j].value = base::StringToDouble(rows[i][members[j].name]);
-                } else if (reflect::TypeIsBool(members[i].type)) {
+                } else if (reflect::TypeIsBool(members[j].type)) {
                     *(bool*)members[j].value = base::StringToBool(rows[i][members[j].name]);;
                 } else if (reflect::TypeIsString(members[j].type)) {
                     *(std::string*)members[j].value = rows[i][members[j].name];
