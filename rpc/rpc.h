@@ -19,8 +19,9 @@
 #pragma once 
 
 #include <rpc/server.h>
+#include <rpc/server_impl.h>
+#include <rpc/async_server_impl.h>
 #include <rpc/client.h>
-#include <rpc/async_server.h>
 
 namespace rpc {
 
@@ -35,7 +36,7 @@ typedef grpc::ClientContext ClientContext;
 // Param host is a string server host, like "localhost".
 // Param port is a int server listen port, like 8080.
 #define START_RPC_SERVER(host, port)\
-    rpc::RpcServer::GetInstance()->Run(host, port);
+    rpc::RpcServerImpl::GetInstance()->Run(host, port);
 
 // Rpc service define.
 #define RPC_SERVICE(service)\
@@ -52,7 +53,7 @@ grpc::Status method(grpc::ServerContext* context,\
 class RpcTmp##service {\
 public:\
     RpcTmp##service() {\
-        rpc::RpcServer::GetInstance()->RegisterService(&service_);\
+        rpc::RpcServerImpl::GetInstance()->RegisterService(&service_);\
     }\
     Rpc##service service_;\
 };\
@@ -66,24 +67,24 @@ grpc::Status Rpc##service::method(grpc::ServerContext* context,\
 
 
 #define START_ASYNC_RPC_SERVER(host, port, thread_num)\
-    rpc::AsyncRpcServer::GetInstance()->Init(thread_num);\
-    rpc::AsyncRpcServer::GetInstance()->Run(host, port);
+    rpc::AsyncRpcServerImpl::GetInstance()->Init(thread_num);\
+    rpc::AsyncRpcServerImpl::GetInstance()->Run(host, port);
 
 #define JOIN_ASYNC_RPC_SERVER()\
-    rpc::AsyncRpcServer::GetInstance()->Join();
+    rpc::AsyncRpcServerImpl::GetInstance()->Join();
 
 #define ASYNC_RPC_SERVICE_DEFINE(service)\
 class AsyncRpcTmp##service {\
 public:\
     AsyncRpcTmp##service() {\
-        rpc::AsyncRpcServer::GetInstance()->RegisterService(&service_);\
+        rpc::AsyncRpcServerImpl::GetInstance()->RegisterService(&service_);\
     }\
     service::AsyncService service_;\
 };\
 AsyncRpcTmp##service g_async_rpc_##service;
 
 #define ASYNC_RPC_METHOD_DEFINE(service, method)\
-class CallData##service##method : public rpc::AsyncRpcServer::CallData {\
+class CallData##service##method : public rpc::AsyncRpcServerImpl::CallData {\
 public:\
     CallData##service##method() : responder(&context) {}\
     void Proceed() override;\
@@ -97,7 +98,7 @@ class CallDataTmp##service##method {\
 public:\
     CallDataTmp##service##method() {\
         auto call_data = new CallData##service##method();\
-        rpc::AsyncRpcServer::GetInstance()->AddInitCallData(call_data);\
+        rpc::AsyncRpcServerImpl::GetInstance()->AddInitCallData(call_data);\
     }\
 };\
 CallDataTmp##service##method call_data_tmp_##service##method;\
@@ -106,8 +107,8 @@ void CallData##service##method::Proceed() {\
         status = PROCESS;\
         g_async_rpc_##service.service_.Request##method(&context, &request,\
                                                        &responder,\
-                                                       rpc::AsyncRpcServer::GetInstance()->cq(),\
-                                                       rpc::AsyncRpcServer::GetInstance()->cq(),\
+                                                       rpc::AsyncRpcServerImpl::GetInstance()->cq(),\
+                                                       rpc::AsyncRpcServerImpl::GetInstance()->cq(),\
                                                        this);\
     } else if (status == FINISH) {\
         delete this;\

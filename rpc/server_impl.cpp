@@ -16,30 +16,33 @@
  *
  */
 
-#include <rpc/server.h>
+#include <rpc/server_impl.h>
 
 #include <base/base.h>
 #include <logs/logs.hpp>
 
 namespace rpc {
 
-RpcServer::RpcServer() {
+RpcServerImpl* RpcServerImpl::rpc_server_ = NULL;
+
+RpcServerImpl::RpcServerImpl() {
 
 }
-RpcServer::~RpcServer() {
-    server_->Shutdown();
+RpcServerImpl::~RpcServerImpl() {
+
+}
+
+RpcServerImpl* RpcServerImpl::GetInstance() {
+    if (rpc_server_ == NULL) {
+        rpc_server_ = new RpcServerImpl();
+    }
+
+    return rpc_server_;
 }
     
-void RpcServer::Run(const std::string& host, int port) {
-    std::string server_address = base::StringPrintf("%s:%d", host.c_str(), port);
-    builder_.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    server_ = builder_.BuildAndStart();
-
-    LOG_INFO("RpcServer Run, listening on %s.", server_address.c_str());
-}
-
-void RpcServer::RegisterService(grpc::Service* service) {
-    builder_.RegisterService(service);
+void RpcServerImpl::Run(const std::string& host, int port) {
+    RpcServer::Run(host, port);
+    server_->Wait();
 }
 
 } // namespace rpc

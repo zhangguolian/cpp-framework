@@ -25,20 +25,15 @@ namespace rpc {
 
 class RpcServer {
 public:
-    static RpcServer* GetInstance();
-    
-    void Run(const std::string& host, int port);
+    RpcServer();
+    virtual ~RpcServer();
+
+    virtual void Run(const std::string& host, int port);
     void RegisterService(grpc::Service* service);
 
-private:
-    RpcServer();
-    ~RpcServer();
-
-private:
+protected:
     grpc::ServerBuilder builder_;
     std::unique_ptr<grpc::Server> server_;
-
-    static RpcServer* rpc_server_;
 };
 
 }; // namespace rpc

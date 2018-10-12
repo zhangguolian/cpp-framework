@@ -21,10 +21,11 @@
 #include <memory>
 #include <async/async.h>
 #include <grpcpp/grpcpp.h>
+#include <rpc/server.h>
 
 namespace rpc {
 
-class AsyncRpcServer {
+class AsyncRpcServerImpl : public RpcServer {
 public:
     class CallData {
     public:
@@ -43,12 +44,11 @@ public:
         grpc::ServerContext context;
     };
 
-    static AsyncRpcServer* GetInstance();
+    static AsyncRpcServerImpl* GetInstance();
     
     void Join();
     void Init(int thread_num);
-    void Run(const std::string& host, int port);
-    void RegisterService(grpc::Service* service);
+    void Run(const std::string& host, int port) override;
     void AddInitCallData(CallData* call_data);
 
     grpc::ServerCompletionQueue* cq();
@@ -56,17 +56,15 @@ public:
 private:
     void HandleRpcs();
 
-    AsyncRpcServer();
-    ~AsyncRpcServer();
+    AsyncRpcServerImpl();
+    ~AsyncRpcServerImpl();
 
 public:
     std::unique_ptr<async::Thread> thread_;
-    grpc::ServerBuilder builder_;
-    std::unique_ptr<grpc::Server> server_;
     std::unique_ptr<grpc::ServerCompletionQueue> cq_;
     std::vector<CallData*> init_call_data_list_; 
 
-    static AsyncRpcServer* rpc_server_;
+    static AsyncRpcServerImpl* rpc_server_;
 };
 
 }; // namespace rpc

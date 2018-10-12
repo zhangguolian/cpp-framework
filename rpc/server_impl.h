@@ -16,31 +16,26 @@
  *
  */
 
-#include <rpc/server.h>
+#pragma once 
 
-#include <base/base.h>
-#include <logs/logs.hpp>
+#include <memory>
+#include <grpcpp/grpcpp.h>
+#include <rpc/server.h>
 
 namespace rpc {
 
-RpcServer::RpcServer() {
-
-}
-RpcServer::~RpcServer() {
-    server_->Shutdown();
-}
+class RpcServerImpl : public RpcServer {
+public:
+    static RpcServerImpl* GetInstance();
     
-void RpcServer::Run(const std::string& host, int port) {
-    std::string server_address = base::StringPrintf("%s:%d", host.c_str(), port);
-    builder_.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    server_ = builder_.BuildAndStart();
+    void Run(const std::string& host, int port) override;
 
-    LOG_INFO("RpcServer Run, listening on %s.", server_address.c_str());
-}
+private:
+    RpcServerImpl();
+    ~RpcServerImpl();
 
-void RpcServer::RegisterService(grpc::Service* service) {
-    builder_.RegisterService(service);
-}
+private:
+    static RpcServerImpl* rpc_server_;
+};
 
-} // namespace rpc
-
+}; // namespace rpc

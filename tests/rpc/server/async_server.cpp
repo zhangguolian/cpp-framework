@@ -76,7 +76,7 @@ ASYNC_RPC_METHOD_DEFINE(RpcTestService, Search1) {
 }
 
 int main() {
-    // Start rpc server
+    // Start rpc server, and start 8 worker threads
     START_ASYNC_RPC_SERVER("127.0.0.1", 50051, 8);
     
     // Wait async server thread
