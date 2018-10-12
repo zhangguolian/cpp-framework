@@ -66,13 +66,21 @@ grpc::Status Rpc##service::method(grpc::ServerContext* context,\
                                   service##Response* response)
 
 
+
+// Start an async rpc server.
+//
+// Param host is a string server host, like "localhost".
+// Param port is a int server listen port, like 8080.
+// Param thread_num is number of rpc message threads processed.
 #define START_ASYNC_RPC_SERVER(host, port, thread_num)\
     rpc::AsyncRpcServerImpl::GetInstance()->Init(thread_num);\
     rpc::AsyncRpcServerImpl::GetInstance()->Run(host, port);
 
+// Waiting for the rpc thread to complete.
 #define JOIN_ASYNC_RPC_SERVER()\
     rpc::AsyncRpcServerImpl::GetInstance()->Join();
 
+// Async rpc service register.
 #define ASYNC_RPC_SERVICE_DEFINE(service)\
 class AsyncRpcTmp##service {\
 public:\
@@ -83,6 +91,7 @@ public:\
 };\
 AsyncRpcTmp##service g_async_rpc_##service;
 
+// Async rpc method define.
 #define ASYNC_RPC_METHOD_DEFINE(service, method)\
 class CallData##service##method : public rpc::AsyncRpcServerImpl::CallData {\
 public:\

@@ -22,7 +22,7 @@
 
 class HttpTest : public http::HttpRequest::Delegate {
 public:
-    // Handle http response 
+    // Handle http response, callback in http thread 
     void OnHttpRequestComplete(std::shared_ptr<http::HttpRequest> request) override
     {
         std::cout << "OnRequestComplete" << std::endl;
