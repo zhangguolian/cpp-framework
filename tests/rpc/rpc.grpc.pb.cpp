@@ -16,6 +16,7 @@
 
 static const char* RpcTestService_method_names[] = {
   "/RpcTestService/Search",
+  "/RpcTestService/Search1",
 };
 
 std::unique_ptr< RpcTestService::Stub> RpcTestService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -26,6 +27,7 @@ std::unique_ptr< RpcTestService::Stub> RpcTestService::NewStub(const std::shared
 
 RpcTestService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_Search_(RpcTestService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Search1_(RpcTestService_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status RpcTestService::Stub::Search(::grpc::ClientContext* context, const ::RpcTestServiceRequest& request, ::RpcTestServiceResponse* response) {
@@ -40,18 +42,42 @@ RpcTestService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& cha
   return ::grpc::internal::ClientAsyncResponseReaderFactory< ::RpcTestServiceResponse>::Create(channel_.get(), cq, rpcmethod_Search_, context, request, false);
 }
 
+::grpc::Status RpcTestService::Stub::Search1(::grpc::ClientContext* context, const ::RpcTestServiceRequest& request, ::RpcTestServiceResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_Search1_, context, request, response);
+}
+
+::grpc::ClientAsyncResponseReader< ::RpcTestServiceResponse>* RpcTestService::Stub::AsyncSearch1Raw(::grpc::ClientContext* context, const ::RpcTestServiceRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::RpcTestServiceResponse>::Create(channel_.get(), cq, rpcmethod_Search1_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::RpcTestServiceResponse>* RpcTestService::Stub::PrepareAsyncSearch1Raw(::grpc::ClientContext* context, const ::RpcTestServiceRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::RpcTestServiceResponse>::Create(channel_.get(), cq, rpcmethod_Search1_, context, request, false);
+}
+
 RpcTestService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       RpcTestService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< RpcTestService::Service, ::RpcTestServiceRequest, ::RpcTestServiceResponse>(
           std::mem_fn(&RpcTestService::Service::Search), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      RpcTestService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< RpcTestService::Service, ::RpcTestServiceRequest, ::RpcTestServiceResponse>(
+          std::mem_fn(&RpcTestService::Service::Search1), this)));
 }
 
 RpcTestService::Service::~Service() {
 }
 
 ::grpc::Status RpcTestService::Service::Search(::grpc::ServerContext* context, const ::RpcTestServiceRequest* request, ::RpcTestServiceResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status RpcTestService::Service::Search1(::grpc::ServerContext* context, const ::RpcTestServiceRequest* request, ::RpcTestServiceResponse* response) {
   (void) context;
   (void) request;
   (void) response;

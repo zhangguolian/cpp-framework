@@ -66,6 +66,31 @@ public:
             return "RPC failed";
         }
     }
+
+    std::string Search1(const std::string& serach) {
+        // Data we are sending to the server.
+        RpcTestServiceRequest request;
+        request.set_request(serach);
+
+        // Container for the data we expect from the server.
+        RpcTestServiceResponse response;
+
+        // Context for the client. It could be used to convey extra information to
+        // the server and/or tweak certain RPC behaviors.
+        rpc::ClientContext context;
+
+        // The actual RPC.
+        rpc::Status status = stub_->Search1(&context, request, &response);
+
+        // Act upon its status.
+        if (status.ok()) {
+            return response.result();
+        } else {
+            std::cout << status.error_code() << ": " << status.error_message()
+                    << std::endl;
+            return "RPC failed";
+        }
+    }
 };
 
 int main(int argc, char** argv) {
@@ -78,8 +103,11 @@ int main(int argc, char** argv) {
     SearchRequest search;
     search.data = "Hello Word!";
 
-    std::string reply = rpc_client.Search(base::JsonMarShal(search));
-    std::cout << "Rpc client received: " << reply << std::endl;
+    std::string result = rpc_client.Search(base::JsonMarShal(search));
+    std::cout << "Rpc client received: " << result << std::endl;
+
+    std::string result1 = rpc_client.Search1(base::JsonMarShal(search));
+    std::cout << "Rpc client received: " << result1 << std::endl;
 
     return 0;
 }

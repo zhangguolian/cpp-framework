@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
-file(GLOB sources "*.cpp")
-file(GLOB headers "*.h")
-
 add_executable(rpc_server_test 
-    ${rpc_test_sources} ${rpc_test_headers}    
-    ${sources} ${headers})
-
+        "server.cpp" 
+        ${rpc_test_sources} ${rpc_test_headers})
 target_link_libraries(rpc_server_test rpc protobuf jsoncpp)
+
+add_executable(async_rpc_server_test 
+        "async_server.cpp" 
+        ${rpc_test_sources} ${rpc_test_headers})
+target_link_libraries(async_rpc_server_test rpc protobuf jsoncpp)

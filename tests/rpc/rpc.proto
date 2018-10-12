@@ -10,12 +10,10 @@ message RpcTestServiceRequest {
 }
 
 message RpcTestServiceResponse {
-    bool Status = 2;
-    int32 Code = 3;
-    string Err_Msg = 4;
-    string Result = 5;
+    string Result = 2;
 }
 
 service RpcTestService {
     rpc Search (RpcTestServiceRequest) returns (RpcTestServiceResponse);
+    rpc Search1 (RpcTestServiceRequest) returns (RpcTestServiceResponse);
 }

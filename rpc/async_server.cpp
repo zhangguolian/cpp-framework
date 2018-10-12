@@ -41,7 +41,15 @@ AsyncRpcServer* AsyncRpcServer::GetInstance() {
 }
     
 void AsyncRpcServer::Join() {
-    thread_.Join();
+    if (thread_.get() != NULL) {
+        thread_->Join();
+    }
+}
+
+void AsyncRpcServer::Init(int thread_num) {
+    if (thread_.get() == NULL) {
+        thread_.reset(new async::Thread(thread_num));
+    }
 }
 
 void AsyncRpcServer::Run(const std::string& host, int port) {
@@ -50,13 +58,26 @@ void AsyncRpcServer::Run(const std::string& host, int port) {
     cq_ = builder_.AddCompletionQueue();
     server_ = builder_.BuildAndStart();
 
+    for (size_t i = 0; i < init_call_data_list_.size(); i++) {
+        init_call_data_list_[i]->Proceed();
+    }
+    init_call_data_list_.clear();
+
     LOG_INFO("AsyncRpcServer Run, listening on %s.", server_address.c_str());
 
-    thread_.PostTask(boost::bind(&AsyncRpcServer::HandleRpcs, this));
+    thread_->PostTask(boost::bind(&AsyncRpcServer::HandleRpcs, this));
 }
 
 void AsyncRpcServer::RegisterService(grpc::Service* service) {
     builder_.RegisterService(service);
+}
+
+void AsyncRpcServer::AddInitCallData(CallData* call_data) {
+    init_call_data_list_.push_back(call_data);
+}
+
+grpc::ServerCompletionQueue* AsyncRpcServer::cq() {
+    return cq_.get();
 }
 
 void AsyncRpcServer::HandleRpcs() {

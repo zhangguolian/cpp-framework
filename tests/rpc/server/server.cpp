@@ -32,14 +32,31 @@ struct SearchRequest {
 RPC_SERVICE(RpcTestService) {
     // Define rpc service method
     RPC_METHOD(RpcTestService, Search);
+    RPC_METHOD(RpcTestService, Search1);
 };
 
 // Register rpc service
 RPC_SERVICE_DEFINE(RpcTestService);
 
-// Define rpc service method
+// Define rpc service method Search
 RPC_METHOD_DEFINE(RpcTestService, Search) {
     printf("RpcTestService Search req:%s\n", request->request().c_str());
+
+    SearchRequest search;
+    if (!base::JsonUnmarshal(request->request(), search)) {
+        printf("JsonUnmarshal fail\n");
+        return rpc::Status(rpc::StatusCode::UNKNOWN, "Invail params");
+    }
+
+    printf("data:%s\n", search.data.c_str());
+
+    response->set_result("success");
+    return rpc::Status::OK;
+}
+
+// Define rpc service method Search1
+RPC_METHOD_DEFINE(RpcTestService, Search1) {
+    printf("RpcTestService Search1 req:%s\n", request->request().c_str());
 
     SearchRequest search;
     if (!base::JsonUnmarshal(request->request(), search)) {

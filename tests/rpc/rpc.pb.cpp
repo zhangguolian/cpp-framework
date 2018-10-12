@@ -77,9 +77,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::RpcTestServiceResponse, status_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::RpcTestServiceResponse, code_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::RpcTestServiceResponse, err_msg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::RpcTestServiceResponse, result_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -114,14 +111,15 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\trpc.proto\"(\n\025RpcTestServiceRequest\022\017\n\007"
-      "Request\030\001 \001(\t\"W\n\026RpcTestServiceResponse\022"
-      "\016\n\006Status\030\002 \001(\010\022\014\n\004Code\030\003 \001(\005\022\017\n\007Err_Msg"
-      "\030\004 \001(\t\022\016\n\006Result\030\005 \001(\t2K\n\016RpcTestService"
-      "\0229\n\006Search\022\026.RpcTestServiceRequest\032\027.Rpc"
-      "TestServiceResponseb\006proto3"
+      "Request\030\001 \001(\t\"(\n\026RpcTestServiceResponse\022"
+      "\016\n\006Result\030\002 \001(\t2\207\001\n\016RpcTestService\0229\n\006Se"
+      "arch\022\026.RpcTestServiceRequest\032\027.RpcTestSe"
+      "rviceResponse\022:\n\007Search1\022\026.RpcTestServic"
+      "eRequest\032\027.RpcTestServiceResponseb\006proto"
+      "3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 227);
+      descriptor, 241);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "rpc.proto", &protobuf_RegisterTypes);
 }
@@ -385,9 +383,6 @@ void RpcTestServiceRequest::InternalSwap(RpcTestServiceRequest* other) {
 void RpcTestServiceResponse::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int RpcTestServiceResponse::kStatusFieldNumber;
-const int RpcTestServiceResponse::kCodeFieldNumber;
-const int RpcTestServiceResponse::kErrMsgFieldNumber;
 const int RpcTestServiceResponse::kResultFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -402,26 +397,15 @@ RpcTestServiceResponse::RpcTestServiceResponse(const RpcTestServiceResponse& fro
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  err_msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.err_msg().size() > 0) {
-    err_msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.err_msg_);
-  }
   result_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.result().size() > 0) {
     result_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.result_);
   }
-  ::memcpy(&status_, &from.status_,
-    static_cast<size_t>(reinterpret_cast<char*>(&code_) -
-    reinterpret_cast<char*>(&status_)) + sizeof(code_));
   // @@protoc_insertion_point(copy_constructor:RpcTestServiceResponse)
 }
 
 void RpcTestServiceResponse::SharedCtor() {
-  err_msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   result_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&status_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&code_) -
-      reinterpret_cast<char*>(&status_)) + sizeof(code_));
 }
 
 RpcTestServiceResponse::~RpcTestServiceResponse() {
@@ -430,7 +414,6 @@ RpcTestServiceResponse::~RpcTestServiceResponse() {
 }
 
 void RpcTestServiceResponse::SharedDtor() {
-  err_msg_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   result_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -454,11 +437,7 @@ void RpcTestServiceResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  err_msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   result_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&status_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&code_) -
-      reinterpret_cast<char*>(&status_)) + sizeof(code_));
   _internal_metadata_.Clear();
 }
 
@@ -472,54 +451,10 @@ bool RpcTestServiceResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bool Status = 2;
+      // string Result = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &status_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 Code = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &code_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string Err_Msg = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_err_msg()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->err_msg().data(), static_cast<int>(this->err_msg().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "RpcTestServiceResponse.Err_Msg"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string Result = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_result()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -558,34 +493,14 @@ void RpcTestServiceResponse::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool Status = 2;
-  if (this->status() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->status(), output);
-  }
-
-  // int32 Code = 3;
-  if (this->code() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->code(), output);
-  }
-
-  // string Err_Msg = 4;
-  if (this->err_msg().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->err_msg().data(), static_cast<int>(this->err_msg().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "RpcTestServiceResponse.Err_Msg");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->err_msg(), output);
-  }
-
-  // string Result = 5;
+  // string Result = 2;
   if (this->result().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->result().data(), static_cast<int>(this->result().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "RpcTestServiceResponse.Result");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->result(), output);
+      2, this->result(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -602,28 +517,7 @@ void RpcTestServiceResponse::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool Status = 2;
-  if (this->status() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->status(), target);
-  }
-
-  // int32 Code = 3;
-  if (this->code() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->code(), target);
-  }
-
-  // string Err_Msg = 4;
-  if (this->err_msg().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->err_msg().data(), static_cast<int>(this->err_msg().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "RpcTestServiceResponse.Err_Msg");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->err_msg(), target);
-  }
-
-  // string Result = 5;
+  // string Result = 2;
   if (this->result().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->result().data(), static_cast<int>(this->result().length()),
@@ -631,7 +525,7 @@ void RpcTestServiceResponse::SerializeWithCachedSizes(
       "RpcTestServiceResponse.Result");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->result(), target);
+        2, this->result(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -651,30 +545,11 @@ size_t RpcTestServiceResponse::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string Err_Msg = 4;
-  if (this->err_msg().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->err_msg());
-  }
-
-  // string Result = 5;
+  // string Result = 2;
   if (this->result().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->result());
-  }
-
-  // bool Status = 2;
-  if (this->status() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // int32 Code = 3;
-  if (this->code() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->code());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -704,19 +579,9 @@ void RpcTestServiceResponse::MergeFrom(const RpcTestServiceResponse& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.err_msg().size() > 0) {
-
-    err_msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.err_msg_);
-  }
   if (from.result().size() > 0) {
 
     result_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.result_);
-  }
-  if (from.status() != 0) {
-    set_status(from.status());
-  }
-  if (from.code() != 0) {
-    set_code(from.code());
   }
 }
 
@@ -744,12 +609,8 @@ void RpcTestServiceResponse::Swap(RpcTestServiceResponse* other) {
 }
 void RpcTestServiceResponse::InternalSwap(RpcTestServiceResponse* other) {
   using std::swap;
-  err_msg_.Swap(&other->err_msg_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
   result_.Swap(&other->result_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  swap(status_, other->status_);
-  swap(code_, other->code_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 

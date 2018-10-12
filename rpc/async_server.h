@@ -28,23 +28,30 @@ class AsyncRpcServer {
 public:
     class CallData {
     public:
+        // Let's implement a tiny state machine 
+        // with the following states.
+        enum CallStatus { CREATE, PROCESS, FINISH };
+        
         CallData() {}
         virtual ~CallData() {}
 
         virtual void Proceed() = 0;
 
     protected:
-        grpc::ServerContext context_;
-        // Let's implement a tiny state machine with the following states.
-        enum CallStatus { CREATE, PROCESS, FINISH };
-        CallStatus status_;  // The current serving state.
+        // The current serving state.
+        CallStatus status; 
+        grpc::ServerContext context;
     };
 
     static AsyncRpcServer* GetInstance();
     
     void Join();
+    void Init(int thread_num);
     void Run(const std::string& host, int port);
     void RegisterService(grpc::Service* service);
+    void AddInitCallData(CallData* call_data);
+
+    grpc::ServerCompletionQueue* cq();
 
 private:
     void HandleRpcs();
@@ -53,10 +60,11 @@ private:
     ~AsyncRpcServer();
 
 public:
-    async::Thread thread_;
+    std::unique_ptr<async::Thread> thread_;
     grpc::ServerBuilder builder_;
     std::unique_ptr<grpc::Server> server_;
     std::unique_ptr<grpc::ServerCompletionQueue> cq_;
+    std::vector<CallData*> init_call_data_list_; 
 
     static AsyncRpcServer* rpc_server_;
 };

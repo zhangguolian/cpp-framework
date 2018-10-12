@@ -19,7 +19,7 @@ file(GLOB headers "*.h")
 
 add_library(rpc ${sources} ${headers})
 
-target_link_libraries(rpc base async grpc++)
+target_link_libraries(rpc base async grpc++ grpc_unsecure)
 
 install(FILES 
         ${PROJECT_SOURCE_DIR}/rpc/rpc.h
