@@ -57,17 +57,25 @@ private:
 type name;\
 class ReflectTmp##name {\
 public:\
-    ReflectTmp##name(void* obj, void* member, const std::string& str_type, const std::string& str_name) {\
+    ReflectTmp##name(void* obj,\
+                     void* member,\
+                     const std::string& str_type,\
+                     const std::string& str_name) {\
         obj_ = obj;\
-        reflect::Reflect::GetInstance()->add_member(obj_, member, str_type, str_name);\
+        reflect::Reflect::GetInstance()->add_member(obj_,\
+                                                    member,\
+                                                    str_type,\
+                                                    str_name);\
     }\
     ~ReflectTmp##name() {\
         reflect::Reflect::GetInstance()->remove_member(obj_);\
     }\
     void* obj_;\
 };\
-ReflectTmp##name reflect_tmp_##name = ReflectTmp##name((void*)this, (void*)&name, #type, #name);
-
+ReflectTmp##name reflect_tmp_##name = ReflectTmp##name((void*)this,\
+                                                       (void*)&name,\
+                                                       #type,\
+                                                       #name);
 
 // Get the list of members of the object.
 //
