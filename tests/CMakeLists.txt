@@ -14,10 +14,7 @@
 # limitations under the License.
 #
 
-add_subdirectory(curl)
 add_subdirectory(http)
-add_subdirectory(timer)
-add_subdirectory(bind)
 add_subdirectory(async)
 add_subdirectory(sql)
 add_subdirectory(base)
