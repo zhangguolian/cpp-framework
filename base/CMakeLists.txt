@@ -24,7 +24,7 @@ target_link_libraries(base reflect crypto event)
 install(FILES 
         ${PROJECT_SOURCE_DIR}/base/base.h
         ${PROJECT_SOURCE_DIR}/base/string.h
-        ${PROJECT_SOURCE_DIR}/base/hash.h
+        ${PROJECT_SOURCE_DIR}/base/ssl.h
         ${PROJECT_SOURCE_DIR}/base/rand.h
         ${PROJECT_SOURCE_DIR}/base/json.hpp
         DESTINATION /usr/local/include/base/)

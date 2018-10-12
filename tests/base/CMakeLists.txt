@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-add_executable(hash_test "hash.cpp")
-target_link_libraries(hash_test base)
+add_executable(ssl_test "ssl.cpp")
+target_link_libraries(ssl_test base)
 
 add_executable(json_test "json.cpp")
 target_link_libraries(json_test base jsoncpp)

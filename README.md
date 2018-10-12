@@ -67,7 +67,7 @@ make && sudo make install
 ### Install dependencies
 
 ```shell
-sudo apt-get install libboost-all-dev libevent-dev libcrypto++-dev libcurl4-openssl-dev libmysqlclient-dev
+sudo apt-get install libboost-all-dev libevent-dev libssl-dev libcurl4-openssl-dev libmysqlclient-dev
 ```
 
 ### Build
