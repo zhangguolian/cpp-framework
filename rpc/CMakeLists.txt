@@ -24,6 +24,8 @@ target_link_libraries(rpc base async grpc++ grpc_unsecure)
 install(FILES 
         ${PROJECT_SOURCE_DIR}/rpc/rpc.h
         ${PROJECT_SOURCE_DIR}/rpc/server.h
+        ${PROJECT_SOURCE_DIR}/rpc/server_impl.h
+        ${PROJECT_SOURCE_DIR}/rpc/async_server_impl.h
         ${PROJECT_SOURCE_DIR}/rpc/client.h
         DESTINATION /usr/local/include/rpc/)
 install(TARGETS rpc ARCHIVE DESTINATION /usr/local/lib/)
