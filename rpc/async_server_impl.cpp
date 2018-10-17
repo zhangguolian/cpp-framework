@@ -23,6 +23,8 @@
 
 namespace rpc {
 
+AsyncRpcServerImpl* AsyncRpcServerImpl::rpc_server_ = NULL;
+
 AsyncRpcServerImpl::AsyncRpcServerImpl() {
 
 }
@@ -31,8 +33,11 @@ AsyncRpcServerImpl::~AsyncRpcServerImpl() {
 }
 
 AsyncRpcServerImpl* AsyncRpcServerImpl::GetInstance() {
-    static AsyncRpcServerImpl rpc_server;
-    return &rpc_server;
+    if (NULL == rpc_server_) {
+        rpc_server_ = new AsyncRpcServerImpl();
+    }
+
+    return rpc_server_;
 }
     
 void AsyncRpcServerImpl::Join() {

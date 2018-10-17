@@ -33,6 +33,9 @@ public:
 private:
     RpcServerImpl();
     ~RpcServerImpl();
+
+private:
+    static RpcServerImpl* rpc_server_;
 };
 
 }; // namespace rpc

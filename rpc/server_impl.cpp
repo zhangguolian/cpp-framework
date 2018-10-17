@@ -23,6 +23,8 @@
 
 namespace rpc {
 
+RpcServerImpl* RpcServerImpl::rpc_server_ = NULL;
+
 RpcServerImpl::RpcServerImpl() {
 
 }
@@ -31,8 +33,11 @@ RpcServerImpl::~RpcServerImpl() {
 }
 
 RpcServerImpl* RpcServerImpl::GetInstance() {
-    static RpcServerImpl rpc_server;
-    return &rpc_server;
+    if (NULL == rpc_server_) {
+        rpc_server_ = new RpcServerImpl();
+    }
+
+    return rpc_server_;
 }
     
 void RpcServerImpl::Run(const std::string& host, int port) {
