@@ -21,15 +21,37 @@
 namespace async {
 
 Thread::Thread(int thread_num) {
+    Start(thread_num);
+}
+Thread::~Thread() {
+    Stop();
+}
+
+void Thread::Start(int thread_num) {
+    if (is_running_) {
+        return;
+    }
+
+    is_running_ = true;
     for (int i = 0; i < thread_num; i++) {
         boost::thread* task_thread = new boost::thread(boost::bind(
             &Thread::TaskThread, this));
         thread_list_.push_back(std::unique_ptr<boost::thread>());
         thread_list_[thread_list_.size()-1].reset(task_thread);
     } 
-}
-Thread::~Thread() {
 
+    return;
+}
+
+void Thread::Stop() {
+    if (!is_running_) {
+        return;
+    }
+    
+    is_running_ = false;
+    io_service_.stop();
+
+    return;
 }
 
 void Thread::Join() {
@@ -70,6 +92,10 @@ bool Thread::operator!=(const boost::thread::id& id) const {
 }
 
 void Thread::TaskThread() {
+    if (!is_running_) {
+        return;
+    }
+
     boost::asio::io_service::work work(io_service_);
     io_service_.run();
     

@@ -31,9 +31,15 @@ namespace async {
 // Maintained a thread pool and threaded message delivery.
 class Thread {
 public:
-    // Param thread_num is number of worker threads
+    // Param thread_num is number of worker threads,
+    // The constructor will start the thread by default
     Thread(int thread_num = 1);
     ~Thread();
+
+    // Start the thread
+    void Start(int thread_num = 1);
+    // Stop the thread 
+    void Stop();
 
     // Blocking waits for all threads to end.
     void Join();
@@ -51,6 +57,7 @@ private:
     void TaskThread();
 
 private:
+    bool is_running_;
     std::vector<std::unique_ptr<boost::thread>> thread_list_;
     boost::asio::io_service io_service_;
 };

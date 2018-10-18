@@ -18,12 +18,15 @@
 
 #include <async/async.h>
 
+std::shared_ptr<async::Thread> main_thread;
+
 void print(int a, int b) {
     std::cout<< "print:" << a+b << std::endl;
 }
 
 void print1(int a, int b) {
     std::cout<< "print1:" << a+b << std::endl;
+    main_thread->Stop();
 }
 
 void print_once(int a, int b) {
@@ -32,7 +35,6 @@ void print_once(int a, int b) {
 
 int main() {
     // Init thread
-    std::shared_ptr<async::Thread> main_thread;
     main_thread.reset(new async::Thread());
 
     // Init timer
