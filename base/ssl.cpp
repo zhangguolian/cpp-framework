@@ -16,7 +16,7 @@
  *
  */
 
-#include <base/hash.h>
+#include <base/ssl.h>
 
 #include <iostream>
 #include <string.h>

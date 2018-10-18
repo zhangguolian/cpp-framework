@@ -19,6 +19,6 @@
 #pragma once 
 
 #include <base/string.h>
-#include <base/hash.h>
+#include <base/ssl.h>
 #include <base/rand.h>
 #include <base/json.hpp>

@@ -56,8 +56,8 @@ uint8_t StringToUInt8(const std::string& data) {
     return result;
 }
 
-uint StringToUInt(const std::string& data) {
-    uint result = 0;
+uint32_t StringToUInt(const std::string& data) {
+    uint32_t result = 0;
     sscanf(data.c_str(), "%u", &result);
     return result;
 }
