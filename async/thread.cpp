@@ -20,7 +20,8 @@
 
 namespace async {
 
-Thread::Thread(int thread_num) {
+Thread::Thread(int thread_num) 
+       : is_running_(false) {
     Start(thread_num);
 }
 Thread::~Thread() {
