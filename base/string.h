@@ -28,7 +28,7 @@ int8_t StringToInt8(const std::string& data);
 int StringToInt(const std::string& data);
 int64_t StringToInt64(const std::string& data);
 uint8_t StringToUInt8(const std::string& data);
-uint StringToUInt(const std::string& data);
+uint32_t StringToUInt(const std::string& data);
 uint64_t StringToUInt64(const std::string& data);
 float StringToFloat(const std::string& data);
 double StringToDouble(const std::string& data);
