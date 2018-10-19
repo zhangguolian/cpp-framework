@@ -39,7 +39,7 @@ inline Json::Value JsonMarShal(void* data) {
         } else if (reflect::TypeIsUInt8(members[i].type)) {
             json_value[members[i].name] = *(uint8_t*)members[i].value;
         } else if (reflect::TypeIsUInt(members[i].type)) {
-            json_value[members[i].name] = *(uint*)members[i].value;
+            json_value[members[i].name] = *(uint32_t*)members[i].value;
         } else if (reflect::TypeIsUInt64(members[i].type)) {
             json_value[members[i].name] = Json::UInt64(*(uint64_t*)members[i].value);
         } else if (reflect::TypeIsFloat(members[i].type)) {
@@ -80,12 +80,16 @@ inline void JsonUnmarshal(const Json::Value& json_value,
 
     try {
         for (size_t i = 0; i < members.size(); i++) {
-            if (reflect::TypeIsInt(members[i].type)) {
+            if (reflect::TypeIsInt8(members[i].type)) {
+                *(int8_t*)members[i].value = (int8_t)json_value[members[i].name].asInt();
+            } else if (reflect::TypeIsInt(members[i].type)) {
                 *(int*)members[i].value = json_value[members[i].name].asInt();
             } else if (reflect::TypeIsInt64(members[i].type)) {
                 *(int64_t*)members[i].value = json_value[members[i].name].asInt64();
+            } else if (reflect::TypeIsUInt8(members[i].type)) {
+                *(uint8_t*)members[i].value = (uint8_t)json_value[members[i].name].asUInt();
             } else if (reflect::TypeIsUInt(members[i].type)) {
-                *(uint*)members[i].value = json_value[members[i].name].asUInt();
+                *(uint32_t*)members[i].value = json_value[members[i].name].asUInt();
             } else if (reflect::TypeIsUInt64(members[i].type)) {
                 *(uint64_t*)members[i].value = json_value[members[i].name].asUInt64();
             } else if (reflect::TypeIsFloat(members[i].type)) {

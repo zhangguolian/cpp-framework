@@ -26,27 +26,12 @@ struct JsonData {
 };
 
 struct JsonTest {
-    JsonTest() {
-        a = 1;
-        b = 2;
-        c = 3;
-        d = 4;
-        e = 5;
-        f = 6;
-        g = 0.1;
-        h = 0.2;
-        i = true;
-        j = "test";
-        data.data1 = 2;
-        data.data2 = "json_data";
-    }
-
     // Define reflect params
     REFLECT_DEFINE(int8_t, a);
     REFLECT_DEFINE(int, b);
     REFLECT_DEFINE(int64_t, c);
     REFLECT_DEFINE(uint8_t, d);
-    REFLECT_DEFINE(uint, e);
+    REFLECT_DEFINE(uint32_t, e);
     REFLECT_DEFINE(uint64_t, f);
     REFLECT_DEFINE(float, g);
     REFLECT_DEFINE(double, h);
@@ -58,6 +43,18 @@ struct JsonTest {
 int main() {
     // Json serialization of json_test
     JsonTest json_test;
+    json_test.a = 1;
+    json_test.b = 2;
+    json_test.c = 3;
+    json_test.d = 4;
+    json_test.e = 5;
+    json_test.f = 6;
+    json_test.g = 0.1;
+    json_test.h = 0.2;
+    json_test.i = true;
+    json_test.j = "test";
+    json_test.data.data1 = 2;
+    json_test.data.data2 = "json_data";
     std::string json_marshal = base::JsonMarShal(json_test);
     std::cout << "JsonMarshal:" << json_marshal << std::endl;
 
@@ -68,10 +65,10 @@ int main() {
         return -1;
     } else {
         std::cout << "JsonUnmarshal:" 
-                  << json_test1.a << "," 
+                  << (int)json_test1.a << "," 
                   << json_test1.b << ","
                   << json_test1.c << "," 
-                  << json_test1.d << "," 
+                  << (int)json_test1.d << "," 
                   << json_test1.e << "," 
                   << json_test1.f << "," 
                   << json_test1.g << "," 
