@@ -16,6 +16,7 @@
  *
  */
 
+#include <iostream>
 #include <async/async.h>
 
 std::shared_ptr<async::Thread> main_thread;
