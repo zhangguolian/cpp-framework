@@ -25,3 +25,6 @@ target_link_libraries(rand_test base)
 
 add_executable(string_test "string.cpp")
 target_link_libraries(string_test base)
+
+add_executable(cmd_test "cmd.cpp")
+target_link_libraries(cmd_test base)

@@ -18,8 +18,11 @@
 
 #pragma once 
 
-#include <base/string.h>
-#include <base/ssl.h>
-#include <base/rand.h>
-#include <base/json.hpp>
-#include <base/cmd.h>
+#include <string>
+
+namespace base {
+
+bool ExecuteCMD(const std::string& cmd, 
+                std::string& result);
+
+}; // namespace base

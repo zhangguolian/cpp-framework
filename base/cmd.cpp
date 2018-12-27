@@ -16,10 +16,29 @@
  *
  */
 
-#pragma once 
-
-#include <base/string.h>
-#include <base/ssl.h>
-#include <base/rand.h>
-#include <base/json.hpp>
 #include <base/cmd.h>
+#include <logs/logs.hpp>
+
+namespace base {
+
+bool ExecuteCMD(const std::string& cmd, 
+                std::string& result) {
+    char buffer[1024];
+    FILE* file = NULL;
+
+    if ((file = popen(cmd.c_str(), "r")) == NULL) {
+        LOG_ERROR("ExecuteCMD popen fail, cmd:%s\n", cmd.c_str());
+        return false;
+    }
+
+    while (fgets(buffer, 1024, file) != NULL) {
+        result.append(buffer);
+    }
+
+    pclose(file);
+    file = NULL;
+
+    return true;
+}
+
+}

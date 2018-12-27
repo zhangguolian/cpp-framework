@@ -16,10 +16,18 @@
  *
  */
 
-#pragma once 
+#include <iostream>
+#include <base/base.h>
+#include <logs/logs.hpp>
 
-#include <base/string.h>
-#include <base/ssl.h>
-#include <base/rand.h>
-#include <base/json.hpp>
-#include <base/cmd.h>
+int main() {
+    std::string result;
+    if (!base::ExecuteCMD("date", result)) {
+        LOG_ERROR("ExecuteCMD fail");
+        return -1;
+    }
+
+    printf("result:%s\n", result.c_str());
+
+    return 0;
+}

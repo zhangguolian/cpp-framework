@@ -27,5 +27,6 @@ install(FILES
         ${PROJECT_SOURCE_DIR}/base/ssl.h
         ${PROJECT_SOURCE_DIR}/base/rand.h
         ${PROJECT_SOURCE_DIR}/base/json.hpp
+        ${PROJECT_SOURCE_DIR}/base/cmd.h
         DESTINATION /usr/local/include/base/)
 install(TARGETS base ARCHIVE DESTINATION /usr/local/lib/)

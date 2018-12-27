@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(cpp_framework VERSION "1.0.0")
+project(cpp-framework VERSION "1.0.0")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions(-DDEBUG)
