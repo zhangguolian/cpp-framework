@@ -83,6 +83,38 @@ ReflectTmp##name reflect_tmp_##name = ReflectTmp##name((void*)this,\
                                                        #type,\
                                                        #name);
 
+// Define reflect array member and register, 
+//
+// Param type is the type of the array member like ArrayList.
+// Param name is the name of the array member.
+#define REFLECT_DEFINE_ARRAY(type, name)\
+type name;\
+class ReflectTmp##name {\
+public:\
+    ReflectTmp##name(void* obj,\
+                     void* member,\
+                     const std::string& str_type,\
+                     const std::string& str_name) {\
+        obj_ = obj;\
+        reflect::Reflect::GetInstance()->add_member(obj_,\
+                                                    member,\
+                                                    "array-"+str_type,\
+                                                    str_name);\
+    }\
+    ReflectTmp##name(const ReflectTmp##name& data) {}\
+    ~ReflectTmp##name() {\
+        reflect::Reflect::GetInstance()->remove_member(obj_);\
+    }\
+    ReflectTmp##name& operator= (const ReflectTmp##name& data) {\
+        return *this;\
+    }\
+    void* obj_;\
+};\
+ReflectTmp##name reflect_tmp_##name = ReflectTmp##name((void*)this,\
+                                                       (void*)&name,\
+                                                       #type,\
+                                                       #name);
+
 // Get the list of members of the object.
 //
 // Param obj is object pointer.  

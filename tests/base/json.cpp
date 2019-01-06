@@ -25,7 +25,7 @@ struct JsonData {
     REFLECT_DEFINE(std::string, data2);
 };
 
-REFLECT_ARRAY_DEFINE(ArrayJson, JsonData);
+REFLECT_ARRAY(ArrayJson, JsonData);
 
 struct JsonTest {
     // Define reflect params
@@ -40,7 +40,7 @@ struct JsonTest {
     REFLECT_DEFINE(bool, i);
     REFLECT_DEFINE(std::string, j);
     REFLECT_DEFINE(JsonData, data);
-    REFLECT_DEFINE(ArrayJson, data_list);
+    REFLECT_DEFINE_ARRAY(ArrayJson, data_list);
 };
 
 int main() {

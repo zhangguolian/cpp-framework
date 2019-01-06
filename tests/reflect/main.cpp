@@ -45,7 +45,7 @@ void ReflectMember(const T& data) {
     }
 }
 
-REFLECT_ARRAY_DEFINE(ArrayTest, Test);
+REFLECT_ARRAY(ArrayTest, Test);
 
 int main() {
     Test test;

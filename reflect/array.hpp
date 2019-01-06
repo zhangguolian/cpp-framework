@@ -42,7 +42,11 @@ protected:
 
 }
 
-#define REFLECT_ARRAY_DEFINE(class_name, type)\
+// Define reflect array, 
+//
+// Param class_name is the class name of the array.
+// Param type is the name of the array member.
+#define REFLECT_ARRAY(class_name, type)\
 class class_name : public reflect::Array {\
 public:\
     class_name() {\
