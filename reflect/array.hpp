@@ -29,7 +29,7 @@ public:
 
     virtual void* index(size_t i) = 0;
     virtual void* add() = 0;
-    size_t size() {
+    size_t size() const {
         return size_;
     }
     void clear() {
@@ -82,7 +82,7 @@ public:\
         }\
         list_[size_++] = data;\
     }\
-    type& operator[] (int i) {\
+    type& operator[] (int i) const {\
         return list_[i];\
     }\
     class_name& operator= (const class_name& data) {\
