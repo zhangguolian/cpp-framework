@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <reflect/member.hpp>
+#include <reflect/array.hpp>
 
 namespace reflect {
 
@@ -68,8 +69,12 @@ public:\
                                                     str_type,\
                                                     str_name);\
     }\
+    ReflectTmp##name(const ReflectTmp##name& data) {}\
     ~ReflectTmp##name() {\
         reflect::Reflect::GetInstance()->remove_member(obj_);\
+    }\
+    ReflectTmp##name& operator= (const ReflectTmp##name& data) {\
+        return *this;\
     }\
     void* obj_;\
 };\

@@ -22,5 +22,6 @@ add_library(reflect ${sources} ${headers})
 install(FILES 
         ${PROJECT_SOURCE_DIR}/reflect/reflect.h
         ${PROJECT_SOURCE_DIR}/reflect/member.hpp
+        ${PROJECT_SOURCE_DIR}/reflect/array.hpp
         DESTINATION /usr/local/include/reflect/)
 install(TARGETS reflect ARCHIVE DESTINATION /usr/local/lib/)

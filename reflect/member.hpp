@@ -58,5 +58,8 @@ inline bool TypeIsBool(const std::string& type) {
 inline bool TypeIsString(const std::string& type) {
     return (type == "std::string" || type == "string");
 }
+inline bool TypeIsArray(const std::string& type) {
+    return (type.find("Array") == 0);
+}
 
 }; // namespace reflect

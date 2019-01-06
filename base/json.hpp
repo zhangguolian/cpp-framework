@@ -50,6 +50,13 @@ inline Json::Value JsonMarShal(void* data) {
             json_value[members[i].name] = *(bool*)members[i].value;
         } else if (reflect::TypeIsString(members[i].type)) {
             json_value[members[i].name] = *(std::string*)members[i].value;
+        } else if (reflect::TypeIsArray(members[i].type)) {
+            reflect::Array* array = static_cast<reflect::Array*>(members[i].value);
+            if (array != NULL) {
+                for (size_t j = 0; j < array->size(); j++) {
+                    json_value[members[i].name].append(JsonMarShal(array->index(j)));
+                }
+            }
         } else {
             json_value[members[i].name] = JsonMarShal(members[i].value);
         }    
@@ -100,6 +107,14 @@ inline void JsonUnmarshal(const Json::Value& json_value,
                 *(bool*)members[i].value = json_value[members[i].name].asBool();
             } else if (reflect::TypeIsString(members[i].type)) {
                 *(std::string*)members[i].value = json_value[members[i].name].asString();
+            } else if (reflect::TypeIsArray(members[i].type)) {
+                reflect::Array* array = static_cast<reflect::Array*>(members[i].value);
+                if (array != NULL && json_value[members[i].name].isArray()) {
+                    array->clear();
+                    for (int j = 0; j < int(json_value[members[i].name].size()); j++) {
+                        JsonUnmarshal(json_value[members[i].name][j], array->add());
+                    }
+                }
             } else {
                 JsonUnmarshal(json_value[members[i].name], members[i].value);
             }    

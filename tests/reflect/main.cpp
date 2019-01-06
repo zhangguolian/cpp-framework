@@ -45,6 +45,8 @@ void ReflectMember(const T& data) {
     }
 }
 
+REFLECT_ARRAY_DEFINE(ArrayTest, Test);
+
 int main() {
     Test test;
     test.a = 1;
@@ -54,6 +56,18 @@ int main() {
     ReflectMember(test);
     // Verify that the modification was successful
     printf("a:%d\n", test.a);
+
+    ArrayTest test_array;
+    test_array.push_back(test);
+    printf("test_array a:%d\n", test_array[0].a);
+
+    reflect::Array* array = static_cast<reflect::Array*>((void*)(&test_array));
+    if (array == NULL) {
+        printf("static_cast Array fail\n");
+        return -1;
+    }
+
+    printf("array size %d\n", int(array->size()));
 
     return 0;
 }
